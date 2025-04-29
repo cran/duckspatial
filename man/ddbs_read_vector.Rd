@@ -4,7 +4,13 @@
 \alias{ddbs_read_vector}
 \title{Load vectorial data from DuckDB into R}
 \usage{
-ddbs_read_vector(conn, name, crs = NULL, crs_column = "crs_duckspatial")
+ddbs_read_vector(
+  conn,
+  name,
+  crs = NULL,
+  crs_column = "crs_duckspatial",
+  clauses = NULL
+)
 }
 \arguments{
 \item{conn}{a connection object to a DuckDB database}
@@ -18,6 +24,9 @@ doesn't have crs_column, and you know the crs}
 \item{crs_column}{a character string of length one specifying the column
 storing the CRS (created automatically by \code{\link{ddbs_write_vector}}). Set
 to NULL if absent}
+
+\item{clauses}{character, additional SQL code to modify the query from the
+table (e.g. "WHERE ...", "ORDER BY...")}
 }
 \value{
 an sf object
@@ -27,7 +36,7 @@ Retrieves the data from a DuckDB table with a geometry column, and convert
 it to an R \code{sf} object.
 }
 \examples{
-\donttest{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 ## load packages
 library(duckdb)
 library(duckspatial)
@@ -43,8 +52,8 @@ ddbs_load(conn)
 ## create random points
 random_points <- data.frame(
   id = 1:5,
-  x = runif(5, min = -180, max = 180),  # Random longitude values
-  y = runif(5, min = -90, max = 90)     # Random latitude values
+  x = runif(5, min = -180, max = 180),
+  y = runif(5, min = -90, max = 90)
 )
 
 ## convert to sf
@@ -58,5 +67,5 @@ ddbs_read_vector(conn, "points", crs = 4326)
 
 ## disconnect from db
 dbDisconnect(conn)
-}
+\dontshow{\}) # examplesIf}
 }
