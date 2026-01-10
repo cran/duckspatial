@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+<meta name="date" content="2026-01-10" />
+
+<title>Areal Interpolation</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Areal Interpolation</h1>
+<h4 class="date">2026-01-10</h4>
+
+
+
+<p>This vignette demonstrates how to use
+<code>ddbs_interpolate_aw()</code> to perform areal-weighted
+interpolation. This technique is essential when you need to transfer
+attributes from one set of polygons (source) to another incongruent set
+of polygons (target) based on their area of overlap.</p>
+<p><code>ddbs_interpolate_aw()</code> can be 9-30x faster than
+<code>sf::st_interpolate_aw</code> or <a href="https://chris-prener.github.io/areal/reference/aw_interpolate.html"><code>areal::aw_interpolate</code></a>
+(see benchmarks in <a href="https://www.ekotov.pro/ducksf/" target="_blank"><code>{ducksf}</code></a> where prototype of
+<code>ddbs_interpolate_aw()</code> was originally developed).</p>
+<p><code>duckspatial</code> handles these heavy geometric calculations
+efficiently using DuckDB. We will cover three scenarios:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Extensive vs. Intensive</strong>: Understanding the
+difference between mass-preserving counts and densities.</li>
+<li><strong>Fast Output</strong>: Returning a <code>tibble</code> (no
+geometry) for maximum speed.</li>
+<li><strong>Database Mode</strong>: Performing operations on persistent
+database tables.</li>
+</ol>
+<div id="setup-data" class="section level3">
+<h3>Setup Data</h3>
+<p>We will use the North Carolina dataset from the <code>sf</code>
+package as our <strong>source</strong>, and create a generic grid as our
+<strong>target</strong>.</p>
+<p><em>Note: We project the data to Albers Equal Area (EPSG:5070)
+because accurate interpolation requires an equal-area
+projection.</em></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(duckspatial)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># 1. Load Source Data (NC Counties)</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>nc <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="fu">system.file</span>(<span class="st">&quot;shape/nc.shp&quot;</span>, <span class="at">package =</span> <span class="st">&quot;sf&quot;</span>), <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co"># 2. Transform to projected CRS (Albers) for accurate area calculations</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>nc <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(nc, <span class="dv">5070</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co"># 3. Create a Target Grid</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">st_make_grid</span>(nc, <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">5</span>)) <span class="sc">|&gt;</span> <span class="fu">st_as_sf</span>()</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co"># 4. Create Unique IDs (Required for interpolation)</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>nc<span class="sc">$</span>source_id <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(nc)</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>grid<span class="sc">$</span>target_id <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(grid)</span></code></pre></div>
+</div>
+<div id="extensive-vs.-intensive-interpolation" class="section level2">
+<h2>1) Extensive vs. Intensive Interpolation</h2>
+<p>Areal interpolation works differently depending on the nature of the
+data.</p>
+<div id="case-a-extensive-variables-counts" class="section level3">
+<h3>Case A: Extensive Variables (Counts)</h3>
+<p>Variables like population counts or total births (<code>BIR74</code>)
+are <strong>spatially extensive</strong>. If a source polygon is split
+in half, the count should also be split in half. We use
+<code>weight = &quot;total&quot;</code> to ensure strict mass preservation
+relative to the source.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Interpolate Total Births (Extensive)</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>res_extensive <span class="ot">&lt;-</span> <span class="fu">ddbs_interpolate_aw</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">target =</span> grid,</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">source =</span> nc,</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="at">extensive =</span> <span class="st">&quot;BIR74&quot;</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="at">weight =</span> <span class="st">&quot;total&quot;</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>  <span class="at">output =</span> <span class="st">&quot;sf&quot;</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>)</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; ✔ Query successful</span></span></code></pre></div>
+<p><strong>Verification:</strong> The total sum of births in the result
+should match the original data (mass preservation).</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>orig_sum <span class="ot">&lt;-</span> <span class="fu">sum</span>(nc<span class="sc">$</span>BIR74)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>new_sum  <span class="ot">&lt;-</span> <span class="fu">sum</span>(res_extensive<span class="sc">$</span>BIR74, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="fu">sprintf</span>(<span class="st">&quot;Original: %s | Interpolated: %s&quot;</span>, orig_sum, <span class="fu">round</span>(new_sum, <span class="dv">1</span>))</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Original: 329962 | Interpolated: 329962&quot;</span></span></code></pre></div>
+</div>
+<div id="case-b-intensive-variables-densitiesratios" class="section level3">
+<h3>Case B: Intensive Variables (Densities/Ratios)</h3>
+<p>Variables like population density or infection rates are
+<strong>spatially intensive</strong>. If a source polygon is split, the
+density remains the same in both pieces. <code>duckspatial</code>
+handles this by calculating the area-weighted average.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Interpolate &#39;BIR74&#39; treating it as an intensive variable (e.g. density assumption)</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>res_intensive <span class="ot">&lt;-</span> <span class="fu">ddbs_interpolate_aw</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">target =</span> grid,</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="at">source =</span> nc,</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="at">intensive =</span> <span class="st">&quot;BIR74&quot;</span>, <span class="co"># Treated as density here</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="at">weight =</span> <span class="st">&quot;sum&quot;</span>,      <span class="co"># Standard behavior for intensive vars</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  <span class="at">output =</span> <span class="st">&quot;sf&quot;</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>)</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; ✔ Query successful</span></span></code></pre></div>
+</div>
+<div id="visual-comparison" class="section level3">
+<h3>Visual Comparison</h3>
+<p>Notice the difference in patterns. Extensive interpolation
+accumulates values based on how much “stuff” falls into a grid cell,
+while intensive interpolation smoothes the values based on overlap.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Combine for plotting</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> res_extensive[, <span class="st">&quot;BIR74&quot;</span>]</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">names</span>(plot_data)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="st">&quot;Extensive_Count&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>plot_data<span class="sc">$</span>Intensive_Value <span class="ot">&lt;-</span> res_intensive<span class="sc">$</span>BIR74</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="fu">plot</span>(plot_data[<span class="fu">c</span>(<span class="st">&quot;Extensive_Count&quot;</span>, <span class="st">&quot;Intensive_Value&quot;</span>)], </span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Interpolation Methods Comparison&quot;</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">&quot;grey90&quot;</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>     <span class="at">key.pos =</span> <span class="dv">4</span>)</span></code></pre></div>
+<p><img role="img" src="data:image/png;base64,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" width="100%" /></p>
+</div>
+</div>
+<div id="high-performance-output-as-tibble" class="section level2">
+<h2>2) High Performance: Output as Tibble</h2>
+<p>If you are working with massive datasets, constructing the geometry
+for the result <code>sf</code> object can be slow. If you only need the
+interpolated numbers, set <code>output = &quot;tibble&quot;</code>. This skips the
+geometry construction step and is significantly faster.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Return a standard data.frame/tibble without geometry</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>res_tbl <span class="ot">&lt;-</span> <span class="fu">ddbs_interpolate_aw</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="at">target =</span> grid,</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="at">source =</span> nc,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="at">extensive =</span> <span class="st">&quot;BIR74&quot;</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="at">output =</span> <span class="st">&quot;tibble&quot;</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>)</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; ✔ Query successful</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="fu">head</span>(res_tbl)</span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 3</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt;   target_id crs_duckspatial BIR74</span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt;       &lt;int&gt; &lt;chr&gt;           &lt;dbl&gt;</span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; 1         1 EPSG:5070       1168.</span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt; 2         2 EPSG:5070        379.</span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#&gt; 3         6 EPSG:5070        753.</span></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#&gt; 4         7 EPSG:5070       5731.</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co">#&gt; 5         8 EPSG:5070       8000.</span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co">#&gt; 6        11 EPSG:5070       1417.</span></span></code></pre></div>
+</div>
+<div id="database-mode-large-data-workflows" class="section level2">
+<h2>3) Database Mode: Large Data Workflows</h2>
+<p>For datasets larger than memory, or for persistent pipelines, you can
+perform the interpolation directly inside the DuckDB database without
+pulling data into R until the end.</p>
+<p>First, let’s establish a connection and load our spatial layers into
+tables.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Create connection</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>conn <span class="ot">&lt;-</span> <span class="fu">ddbs_create_conn</span>()</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co"># Write layers to DuckDB</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="fu">ddbs_write_vector</span>(conn, nc, <span class="st">&quot;nc_table&quot;</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; ℹ Table &lt;nc_table&gt; dropped</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; ✔ Table nc_table successfully imported</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="fu">ddbs_write_vector</span>(conn, grid, <span class="st">&quot;grid_table&quot;</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; ℹ Table &lt;grid_table&gt; dropped</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; ✔ Table grid_table successfully imported</span></span></code></pre></div>
+<p>Now we run the interpolation by referencing the table names. We can
+also use the <code>name</code> argument to save the result directly to a
+new table instead of returning it to R.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Run interpolation and save to new table &#39;nc_grid_births&#39;</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">ddbs_interpolate_aw</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">conn =</span> conn,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">target =</span> <span class="st">&quot;grid_table&quot;</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="at">source =</span> <span class="st">&quot;nc_table&quot;</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  <span class="at">extensive =</span> <span class="st">&quot;BIR74&quot;</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>  <span class="at">weight =</span> <span class="st">&quot;total&quot;</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;nc_grid_births&quot;</span>, <span class="co"># &lt;--- Writes to DB</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>)</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt; ℹ Table &lt;nc_grid_births&gt; dropped</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt; ✔ Query successful</span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co"># Verify the table was created</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbListTables</span>(conn)</span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; [1] &quot;grid_table&quot;     &quot;nc_grid_births&quot; &quot;nc_table&quot;</span></span></code></pre></div>
+<p>We can now query this table or read it back later.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Read the result back from the database</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>final_sf <span class="ot">&lt;-</span> <span class="fu">ddbs_read_vector</span>(conn, <span class="st">&quot;nc_grid_births&quot;</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; ✔ table nc_grid_births successfully imported.</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="fu">head</span>(final_sf)</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 6 features and 2 fields</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; Geometry type: POLYGON</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; Dimension:     XY</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; Bounding box:  xmin: 1054293 ymin: 1348021 xmax: 1677656 ymax: 1484503</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; Projected CRS: NAD83 / Conus Albers</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt;   target_id     BIR74                              x</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; 1         1 1168.3093 POLYGON ((1054293 1348021, ...</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; 2         2  378.5281 POLYGON ((1132214 1348021, ...</span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; 3         6  752.9156 POLYGON ((1443895 1348021, ...</span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt; 4         7 5731.0103 POLYGON ((1521815 1348021, ...</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#&gt; 5         8 7999.6957 POLYGON ((1599735 1348021, ...</span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#&gt; 6        11 1416.5579 POLYGON ((1054293 1416262, ...</span></span></code></pre></div>
+<p>If we only wanted the database table, without the geometry, we could
+do:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">ddbs_interpolate_aw</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="at">conn =</span> conn,</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="at">target =</span> <span class="st">&quot;grid_table&quot;</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="at">source =</span> <span class="st">&quot;nc_table&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>  <span class="at">extensive =</span> <span class="st">&quot;BIR74&quot;</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>  <span class="at">weight =</span> <span class="st">&quot;total&quot;</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;nc_grid_births&quot;</span>, <span class="co"># &lt;--- Writes to DB</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a>  <span class="at">output =</span> <span class="st">&quot;tibble&quot;</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>)</span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#&gt; ℹ Table &lt;nc_grid_births&gt; dropped</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt; ✔ Query successful</span></span></code></pre></div>
+<p>And preview this table directly in the database:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbGetQuery</span>(conn, <span class="st">&quot;SELECT * FROM nc_grid_births LIMIT 5&quot;</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co">#&gt;   target_id crs_duckspatial     BIR74</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt; 1         1       EPSG:5070 1168.3093</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt; 2         2       EPSG:5070  378.5281</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co">#&gt; 3         6       EPSG:5070  752.9156</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt; 4         7       EPSG:5070 5731.0103</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt; 5         8       EPSG:5070 7999.6957</span></span></code></pre></div>
+<div id="cleanup" class="section level3">
+<h3>Cleanup</h3>
+<p>Always close the connection when finished.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>duckdb<span class="sc">::</span><span class="fu">dbDisconnect</span>(conn)</span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

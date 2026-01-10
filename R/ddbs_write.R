@@ -1,30 +1,26 @@
-
 #' Write an SF Object to a DuckDB Database
 #'
 #' This function writes a Simple Features (SF) object into a DuckDB database as a new table.
 #' The table is created in the specified schema of the DuckDB database.
 #'
-#' @param conn a connection object to a DuckDB database
-#' @param data a \code{sf} object to write to the DuckDB database, or a local file
-#' @param name a character string of length one specifying the name of the table,
-#' or a character string of length two specifying the schema and table names.
-#' @param overwrite whether to overwrite the existing table if it exists
+#' @template conn
+#' @param data A \code{sf} object to write to the DuckDB database, or the path to
+#'        a local file that can be read with `ST_READ`
+#' @template name
+#' @template overwrite
+#' @param temp_view If `TRUE`, registers the `sf` object as a temporary Arrow-backed database 'view' using `ddbs_register_vector` instead of creating a persistent table. This is much faster but the view will not persist. Defaults to `FALSE`.
+#' @template quiet
 #'
 #' @returns TRUE (invisibly) for successful import
 #' @export
 #'
 #' @examplesIf interactive()
 #' ## load packages
-#' library(duckdb)
 #' library(duckspatial)
 #' library(sf)
 #'
-#' ## connect to in memory database
-#' conn <- dbConnect(duckdb::duckdb())
-#'
-#' ## install the spatial exntesion
-#' ddbs_install(conn)
-#' ddbs_load(conn)
+#' # create a duckdb database in memory (with spatial extension)
+#' conn <- ddbs_create_conn(dbdir = "memory")
 #'
 #' ## create random points
 #' random_points <- data.frame(
@@ -44,22 +40,35 @@
 #'
 #' ## disconnect from db
 #' dbDisconnect(conn)
-ddbs_write_vector <- function(conn, data, name, overwrite = FALSE) {
-
+ddbs_write_vector <- function(
+    conn,
+    data,
+    name,
+    overwrite = FALSE,
+    temp_view = FALSE,
+    quiet = FALSE
+) {
     # 1. Checks
     ## Check if connection is correct
     dbConnCheck(conn)
+
+    ## Handle temp_view
+    if (temp_view) {
+        return(ddbs_register_vector(conn, data, name, overwrite, quiet))
+    }
+
     ## convenient names of table and/or schema.table
     name_list <- get_query_name(name)
+    ## get schema.table available in the database
+    tables_df <- ddbs_list_tables(conn)
+    db_tables <- paste0(tables_df$table_schema, ".", tables_df$table_name) |>
+        sub(pattern = "^main\\.", replacement = "")
     ## Check if table name already exists
-    if (name_list$query_name %in% DBI::dbListTables(conn) & !overwrite)
+    if (name_list$query_name %in% db_tables & !overwrite)
         cli::cli_abort("The provided name is already present in the database. Please, use `overwrite = TRUE` or choose a different name.")
 
     # 2. Handle overwrite
-    if (overwrite) {
-        DBI::dbExecute(conn, glue::glue("DROP TABLE IF EXISTS {name_list$query_name};"))
-        cli::cli_alert_info("Table {name_list$query_name} dropped")
-    }
+    overwrite_table(name_list$query_name, conn, quiet, overwrite)
 
     ## 3. insert data
     if (inherits(data, "sf")) {
@@ -95,11 +104,16 @@ ddbs_write_vector <- function(conn, data, name, overwrite = FALSE) {
         ## CRS
         ## get data CRS
         data_crs <- sf::st_crs(data, parameters = TRUE)
-        ## create new column with CRS as default value
-        DBI::dbExecute(conn, glue::glue("
+
+        if (is.null(data_crs$srid) || is.na(data_crs$srid)) {
+            cli::cli_alert_warning("No CRS found in the input data. The table will be created without CRS information.")
+        } else {
+            ## create new column with CRS as default value
+            DBI::dbExecute(conn, glue::glue("
             ALTER TABLE {name_list$query_name}
             ADD COLUMN crs_duckspatial VARCHAR DEFAULT '{data_crs$srid}';
         "))
+        }
 
     } else {
         ## check file extension
@@ -143,9 +157,10 @@ ddbs_write_vector <- function(conn, data, name, overwrite = FALSE) {
 
 
     # 6. User feedback
-    cli::cli_alert_success("Table {name_list$query_name} successfully imported")
+    if (isFALSE(quiet)) {
+        cli::cli_alert_success("Table {name_list$query_name} successfully imported")
+        }
+
     return(invisible(TRUE))
 
 }
-
-
