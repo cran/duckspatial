@@ -2,26 +2,31 @@
 % Please edit documentation in R/ddbs_extent_funs.R
 \name{ddbs_envelope}
 \alias{ddbs_envelope}
-\title{Returns the envelope (bounding box) of geometries}
+\title{Get the envelope (bounding box) of geometries}
 \usage{
 ddbs_envelope(
   x,
   by_feature = FALSE,
   conn = NULL,
   name = NULL,
-  crs = NULL,
-  crs_column = "crs_duckspatial",
+  mode = NULL,
   overwrite = FALSE,
   quiet = FALSE
 )
 }
 \arguments{
-\item{x}{An \code{sf} spatial object. Alternatively, it can be a string with the
-name of a table with geometry column within the DuckDB database \code{conn}.
+\item{x}{Input spatial data. Can be:
+\itemize{
+\item A \code{duckspatial_df} object (lazy spatial data frame via dbplyr)
+\item An \code{sf} object
+\item A \code{tbl_lazy} from dbplyr
+\item A character string naming a table/view in \code{conn}
+}
 Data is returned from this object.}
 
-\item{by_feature}{Logical. If \code{TRUE}, returns one envelope per feature.
-If \code{FALSE} (default), returns a single envelope for all geometries combined.}
+\item{by_feature}{Logical. If \code{TRUE}, the geometric operation is applied
+separately to each geometry. If \code{FALSE}, the geometric
+operation is applied to the data as a whole.}
 
 \item{conn}{A connection object to a DuckDB database. If \code{NULL}, the function
 runs on a temporary DuckDB database.}
@@ -31,12 +36,13 @@ or a character string of length two specifying the schema and table
 names. If \code{NULL} (the default), the function returns the result as an
 \code{sf} object}
 
-\item{crs}{The coordinates reference system of the data. Specify if the data
-doesn't have a \code{crs_column}, and you know the CRS.}
-
-\item{crs_column}{a character string of length one specifying the column
-storing the CRS (created automatically by \code{\link{ddbs_write_vector}}).
-Set to \code{NULL} if absent.}
+\item{mode}{Character. Controls the return type. Options:
+\itemize{
+\item \code{"duckspatial"} (default): Lazy spatial data frame backed by dbplyr/DuckDB
+\item \code{"sf"}: Eagerly collected sf object (uses memory)
+}
+Can be set globally via \code{\link{ddbs_options}(mode = "...")} or
+per-function via this argument. Per-function overrides global setting.}
 
 \item{overwrite}{Boolean. whether to overwrite the existing table if it exists. Defaults
 to \code{FALSE}. This argument is ignored when \code{name} is \code{NULL}.}
@@ -45,12 +51,16 @@ to \code{FALSE}. This argument is ignored when \code{name} is \code{NULL}.}
 Defaults to \code{FALSE}.}
 }
 \value{
-an \code{sf} object or \code{TRUE} (invisibly) for table creation
+Depends on the \code{mode} argument (or global preference set by \code{\link{ddbs_options}}):
+\itemize{
+\item \code{duckspatial} (default): A \code{duckspatial_df} (lazy spatial data frame) backed by dbplyr/DuckDB.
+\item \code{sf}: An eagerly collected object in R memory, that will return the same data type as the
+\code{sf} equivalent (e.g. \code{sf} or \code{units} vector).
+}
+When \code{name} is provided, the result is also written as a table or view in DuckDB and the function returns \code{TRUE} (invisibly).
 }
 \description{
-Returns the minimum bounding rectangle (envelope) of geometries from a \code{sf}
-object or a DuckDB table. Returns the result as an \code{sf} object or creates
-a new table in the database.
+Returns the minimum axis-aligned rectangle that fully contains the geometry.
 }
 \details{
 ST_Envelope returns the minimum bounding rectangle (MBR) of a geometry as a
@@ -65,19 +75,21 @@ is returned that encompasses the entire dataset.
 \dontrun{
 ## load packages
 library(duckspatial)
-library(sf)
 
 # read data
-argentina_sf <- st_read(system.file("spatial/argentina.geojson", package = "duckspatial"))
+argentina_ddbs <- ddbs_open_dataset(
+  system.file("spatial/argentina.geojson", 
+  package = "duckspatial")
+)
 
 # input as sf, and output as sf
-env <- ddbs_envelope(x = argentina_sf, by_feature = TRUE)
+env <- ddbs_envelope(x = argentina_ddbs, by_feature = TRUE)
 
 # create a duckdb database in memory (with spatial extension)
 conn <- ddbs_create_conn(dbdir = "memory")
 
 # store in duckdb
-ddbs_write_vector(conn, argentina_sf, "argentina")
+ddbs_write_table(conn, argentina_ddbs, "argentina")
 
 # envelope for each feature
 env <- ddbs_envelope("argentina", conn, by_feature = TRUE)

@@ -1,0 +1,295 @@
+#' Register an SF Object as an Arrow Table in DuckDB
+#'
+#' This function registers a Simple Features (SF) object as a temporary Arrow-backed
+#' view in a DuckDB database. This is a zero-copy operation and is significantly
+#' faster than `ddbs_write_table` for workflows that do not require data to be
+#' permanently materialized in the database.
+#'
+#' @inheritParams ddbs_write_table
+#' @returns TRUE (invisibly) on successful registration.
+#' @export
+#' @examples
+#' \dontrun{
+#' library(duckdb)
+#' library(duckspatial)
+#' library(sf)
+#'
+#' conn <- ddbs_create_conn("memory")
+#'
+#' nc <- st_read(system.file("shape/nc.shp", package="sf"), quiet = TRUE)
+#'
+#' ddbs_register_table(conn, nc, "nc_arrow_view")
+#'
+#' dbGetQuery(conn, "SELECT COUNT(*) FROM nc_arrow_view;")
+#'
+#' ddbs_stop_conn(conn)
+#'}
+ddbs_register_table <- function(
+    conn,
+    data,
+    name,
+    overwrite = FALSE,
+    quiet = FALSE
+) {
+    # 1. Checks
+    dbConnCheck(conn)
+    name_list <- get_query_name(name)
+    view_name <- name_list$query_name
+
+    # Handle duckspatial_df/tbl_lazy by collecting to sf first
+    data_sf <- if (inherits(data, "duckspatial_df")) {
+        ddbs_collect(data, as = "sf")
+    } else if (inherits(data, "tbl_lazy")) {
+        dplyr::collect(data) |> sf::st_as_sf()
+    } else if (inherits(data, "sf")) {
+        data
+    } else if (is.character(data) && length(data) == 1) {
+        sf::st_read(data, quiet = TRUE)
+    } else {
+        cli::cli_abort(
+            "{.arg data} must be an {.cls sf} object, {.cls duckspatial_df}, or a readable file path."
+        )
+    }
+
+    tables_df <- ddbs_list_tables(conn)
+    db_tables <- paste0(tables_df$table_schema, ".", tables_df$table_name) |>
+        sub(pattern = "^main\\.", replacement = "")
+    name_exists <- view_name %in% db_tables
+    arrow_views <- try(
+        duckdb::duckdb_list_arrow(conn),
+        silent = TRUE
+    )
+    arrow_exists <- if (inherits(arrow_views, "try-error")) {
+        FALSE
+    } else {
+        view_name %in% arrow_views
+    }
+
+    if ((name_exists || arrow_exists) && !overwrite) {
+        cli::cli_abort(
+            "The provided view (or table) name is already present in the database. Please, use `overwrite = TRUE` or choose a different name."
+        )
+    }
+
+    if (overwrite && (name_exists || arrow_exists)) {
+        if (name_exists) {
+            match_idx <- which(db_tables == view_name)[1]
+            table_type <- tables_df$table_type[match_idx]
+            drop_stmt <- if (
+                !is.na(table_type) && identical(table_type, "VIEW")
+            ) {
+                glue::glue("DROP VIEW IF EXISTS {view_name};")
+            } else {
+                glue::glue("DROP TABLE IF EXISTS {view_name};")
+            }
+            DBI::dbExecute(conn, drop_stmt)
+            if (isFALSE(quiet)) {
+                cli::cli_alert_info("Existing object {view_name} dropped")
+            }
+        }
+        if (arrow_exists) {
+            try(
+                duckdb::duckdb_unregister_arrow(conn, view_name),
+                silent = TRUE
+            )
+        }
+    }
+
+    # Try to register geoarrow extensions when available
+    try(
+        DBI::dbExecute(conn, "CALL register_geoarrow_extensions();"),
+        silent = TRUE
+    )
+
+    # 2. Register table
+  
+    ## First, split data and geometry
+    df <- sf::st_drop_geometry(data_sf)
+    wkb <- wk::as_wkb(sf::st_geometry(data_sf))
+
+    ## Get original geometry column name and CRS
+    geom_name <- attr(data_sf, "sf_column")
+    crs <- sf::st_crs(data_sf, describe = TRUE)$input
+  
+    ## Create arrow table
+    arrow_table <- {
+      df[[geom_name]] <- geoarrow::as_geoarrow_vctr(
+        wkb,
+        schema = geoarrow::geoarrow_wkb(crs = crs)
+      )
+      arrow::Table$create(df)
+    }
+
+    ## Register the table
+    duckdb::duckdb_register_arrow(conn, view_name, arrow_table)
+
+
+    ## User feedback
+    if (isFALSE(quiet)) {
+        cli::cli_alert_success("Temporary view {view_name} registered")
+    }
+
+    invisible(TRUE)
+}
+
+# ddbs_register_table <- function(
+#     conn,
+#     data,
+#     name,
+#     overwrite = FALSE,
+#     quiet = FALSE
+# ) {
+#     # 1. Checks
+#     dbConnCheck(conn)
+#     name_list <- get_query_name(name)
+#     view_name <- name_list$query_name
+
+#     # Handle duckspatial_df/tbl_lazy by collecting to sf first
+#     data_sf <- if (inherits(data, "duckspatial_df")) {
+#         ddbs_collect(data, as = "sf")
+#     } else if (inherits(data, "tbl_lazy")) {
+#         dplyr::collect(data) |> sf::st_as_sf()
+#     } else if (inherits(data, "sf")) {
+#         data
+#     } else if (is.character(data) && length(data) == 1) {
+#         sf::st_read(data, quiet = TRUE)
+#     } else {
+#         cli::cli_abort(
+#             "{.arg data} must be an {.cls sf} object, {.cls duckspatial_df}, or a readable file path."
+#         )
+#     }
+
+#     tables_df <- ddbs_list_tables(conn)
+#     db_tables <- paste0(tables_df$table_schema, ".", tables_df$table_name) |>
+#         sub(pattern = "^main\\.", replacement = "")
+#     name_exists <- view_name %in% db_tables
+#     arrow_views <- try(
+#         duckdb::duckdb_list_arrow(conn),
+#         silent = TRUE
+#     )
+#     arrow_exists <- if (inherits(arrow_views, "try-error")) {
+#         FALSE
+#     } else {
+#         view_name %in% arrow_views
+#     }
+
+#     if ((name_exists || arrow_exists) && !overwrite) {
+#         cli::cli_abort(
+#             "The provided view (or table) name is already present in the database. Please, use `overwrite = TRUE` or choose a different name."
+#         )
+#     }
+
+#     if (overwrite && (name_exists || arrow_exists)) {
+#         if (name_exists) {
+#             match_idx <- which(db_tables == view_name)[1]
+#             table_type <- tables_df$table_type[match_idx]
+#             drop_stmt <- if (
+#                 !is.na(table_type) && identical(table_type, "VIEW")
+#             ) {
+#                 glue::glue("DROP VIEW IF EXISTS {view_name};")
+#             } else {
+#                 glue::glue("DROP TABLE IF EXISTS {view_name};")
+#             }
+#             DBI::dbExecute(conn, drop_stmt)
+#             if (isFALSE(quiet)) {
+#                 cli::cli_alert_info("Existing object {view_name} dropped")
+#             }
+#         }
+#         if (arrow_exists) {
+#             try(
+#                 duckdb::duckdb_unregister_arrow(conn, view_name),
+#                 silent = TRUE
+#             )
+#         }
+#     }
+
+#     # Try to register geoarrow extensions when available
+#     try(
+#         DBI::dbExecute(conn, "CALL register_geoarrow_extensions();"),
+#         silent = TRUE
+#     )
+
+#     # 2. Register table
+#     df <- sf::st_drop_geometry(data_sf)
+#     wkb <- wk::as_wkb(sf::st_geometry(data_sf))
+
+#     # Get original geometry column name
+#     geom_col_name <- attr(data_sf, "sf_column")
+
+#     # Use geoarrow to create a geoarrow vector from WKB
+#     # Assign to original geometry column name instead of hardcoded "geometry"
+#     df[[geom_col_name]] <- geoarrow::as_geoarrow_vctr(
+#         wkb,
+#         schema = geoarrow::geoarrow_wkb()
+#     )
+
+#     # Get the CRS (however, right now it doesnt recognize the CRS and defaults to GEOMETRY 
+#     # without SRID, which is not ideal)
+#     # data_crs <- get_geometry_type_duckdb(data_sf)
+#     data_crs <- ddbs_crs(data_sf)
+
+#     # arrow_table <- tryCatch({
+#     #    arrow::Table$create(df)
+#     # }, error = function(e) {
+#     #    # Fallback to standard WKB (binary) if geoarrow fails
+#     #    # (e.g. "NotImplemented: MakeBuilder: cannot construct builder for type geoarrow.wkb")
+#     #    df[[geom_col_name]] <- wkb
+#     #    arrow::Table$create(df)
+#     # })
+#     arrow_table <- tryCatch({
+#         # Attach CRS to the geometry column via geoarrow type
+#         df[[geom_col_name]] <- as_geoarrow_vctr(
+#             df[[geom_col_name]],
+#             type = geoarrow_wkb(crs = data_crs$input)
+#         )
+#         arrow::Table$create(df)
+#         }, error = function(e) {
+#         # Fallback: use raw WKB and embed CRS metadata manually in the field
+#         df[[geom_col_name]] <- wkb
+#         arrow::Table$create(df)
+#     })
+
+#     duckdb::duckdb_register_arrow(conn, view_name, arrow_table)
+
+#     if (isFALSE(quiet)) {
+#         cli::cli_alert_success("Temporary view {view_name} registered")
+#     }
+
+#     invisible(TRUE)
+# }
+
+
+
+
+#' Register an SF Object as an Arrow Table in DuckDB
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' `ddbs_register_vector()` was renamed to \code{\link{ddbs_register_table}}.
+#'
+#' @inheritParams ddbs_register_table
+#' @returns TRUE (invisibly) on successful registration.
+#' @export
+#' @keywords internal
+ddbs_register_vector <- function(
+    conn,
+    data,
+    name,
+    overwrite = FALSE,
+    quiet = FALSE) {
+    
+    lifecycle::deprecate_soft(
+        when    = "1.0.0",
+        what    = "ddbs_register_vector()",
+        with    = "ddbs_register_table()"
+    )
+    
+    ddbs_register_table(
+        conn = conn,
+        data = data,
+        name = name,
+        overwrite = overwrite,
+        quiet = quiet
+    )
+}

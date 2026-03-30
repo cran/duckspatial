@@ -1,7 +1,7 @@
 Type: Package
 Package: duckspatial
 Title: R Interface to 'DuckDB' Database with Spatial Extension
-Version: 0.9.0
+Version: 1.0.0
 Authors@R: c(
     person(
         "Adrián", "Cidre González", 
@@ -10,16 +10,16 @@ Authors@R: c(
         comment = c(ORCID = "0000-0002-3310-3052")
     ),
     person(
-        "Rafael H. M.", "Pereira", , 
-        "rafa.pereira.br@gmail.com", 
-        role = "aut",
-        comment = c(ORCID = "0000-0003-2125-7465")
-    ),
-    person(
         "Egor", "Kotov", , 
         "kotov.egor@gmail.com", 
         role = "aut",
         comment = c(ORCID = "0000-0001-6690-5345")
+    ),
+    person(
+        "Rafael H. M.", "Pereira", , 
+        "rafa.pereira.br@gmail.com", 
+        role = "aut",
+        comment = c(ORCID = "0000-0003-2125-7465")
     ))
 Description: Fast & memory-efficient functions to analyze and manipulate large 
              spatial data data sets. It leverages the fast analytical 
@@ -31,21 +31,23 @@ URL: https://cidree.github.io/duckspatial/,
 BugReports: https://github.com/Cidree/duckspatial/issues
 License: GPL (>= 3)
 Depends: R (>= 4.1.0)
-Imports: arrow, cli, duckdb, geoarrow, DBI, glue, sf, wk, uuid, rlang,
-        lifecycle
-Suggests: areal, bench, dplyr, ggplot2 (>= 3.3.1), knitr, lwgeom,
-        quadkeyr, rmarkdown, terra, testthat (>= 3.0.0)
-VignetteBuilder: knitr
-RoxygenNote: 7.3.3
+Imports: arrow, cli, DBI, dbplyr (>= 2.0.0), dplyr, duckdb (>= 1.5.1),
+        geoarrow, glue, lifecycle, nanoarrow, rlang, sf, tibble, tools,
+        units, uuid, withr, wk
+Suggests: areal, bench, duckdbfs, ggplot2 (>= 3.3.1), knitr, lwgeom,
+        patchwork, quadkeyr, quarto, rmarkdown, scales, terra, testthat
+        (>= 3.0.0)
+VignetteBuilder: quarto
 Config/testthat/edition: 3
 Encoding: UTF-8
+RoxygenNote: 7.3.3
 NeedsCompilation: no
-Packaged: 2026-01-10 07:32:39 UTC; Cidre
+Packaged: 2026-03-30 17:26:35 UTC; Cidre
 Author: Adrián Cidre González [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-3310-3052>),
+  Egor Kotov [aut] (ORCID: <https://orcid.org/0000-0001-6690-5345>),
   Rafael H. M. Pereira [aut] (ORCID:
-    <https://orcid.org/0000-0003-2125-7465>),
-  Egor Kotov [aut] (ORCID: <https://orcid.org/0000-0001-6690-5345>)
+    <https://orcid.org/0000-0003-2125-7465>)
 Maintainer: Adrián Cidre González <adrian.cidre@gmail.com>
 Repository: CRAN
-Date/Publication: 2026-01-10 15:00:07 UTC
+Date/Publication: 2026-03-30 17:50:02 UTC

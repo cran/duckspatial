@@ -2,21 +2,25 @@
 % Please edit documentation in R/ddbs_ops_unary.R
 \name{ddbs_make_polygon}
 \alias{ddbs_make_polygon}
-\title{Creates polygons from linestring geometries}
+\title{Create a polygon from a single closed linestring}
 \usage{
 ddbs_make_polygon(
   x,
   conn = NULL,
   name = NULL,
-  crs = NULL,
-  crs_column = "crs_duckspatial",
+  mode = NULL,
   overwrite = FALSE,
   quiet = FALSE
 )
 }
 \arguments{
-\item{x}{An \code{sf} spatial object. Alternatively, it can be a string with the
-name of a table with geometry column within the DuckDB database \code{conn}.
+\item{x}{Input spatial data. Can be:
+\itemize{
+\item A \code{duckspatial_df} object (lazy spatial data frame via dbplyr)
+\item An \code{sf} object
+\item A \code{tbl_lazy} from dbplyr
+\item A character string naming a table/view in \code{conn}
+}
 Data is returned from this object.}
 
 \item{conn}{A connection object to a DuckDB database. If \code{NULL}, the function
@@ -27,12 +31,13 @@ or a character string of length two specifying the schema and table
 names. If \code{NULL} (the default), the function returns the result as an
 \code{sf} object}
 
-\item{crs}{The coordinates reference system of the data. Specify if the data
-doesn't have a \code{crs_column}, and you know the CRS.}
-
-\item{crs_column}{a character string of length one specifying the column
-storing the CRS (created automatically by \code{\link{ddbs_write_vector}}).
-Set to \code{NULL} if absent.}
+\item{mode}{Character. Controls the return type. Options:
+\itemize{
+\item \code{"duckspatial"} (default): Lazy spatial data frame backed by dbplyr/DuckDB
+\item \code{"sf"}: Eagerly collected sf object (uses memory)
+}
+Can be set globally via \code{\link{ddbs_options}(mode = "...")} or
+per-function via this argument. Per-function overrides global setting.}
 
 \item{overwrite}{Boolean. whether to overwrite the existing table if it exists. Defaults
 to \code{FALSE}. This argument is ignored when \code{name} is \code{NULL}.}
@@ -41,34 +46,49 @@ to \code{FALSE}. This argument is ignored when \code{name} is \code{NULL}.}
 Defaults to \code{FALSE}.}
 }
 \value{
-an \code{sf} object or \code{TRUE} (invisibly) for table creation
+Depends on the \code{mode} argument (or global preference set by \code{\link{ddbs_options}}):
+\itemize{
+\item \code{duckspatial} (default): A \code{duckspatial_df} (lazy spatial data frame) backed by dbplyr/DuckDB.
+\item \code{sf}: An eagerly collected object in R memory, that will return the same data type as the
+\code{sf} equivalent (e.g. \code{sf} or \code{units} vector).
+}
+When \code{name} is provided, the result is also written as a table or view in DuckDB and the function returns \code{TRUE} (invisibly).
 }
 \description{
-Constructs polygon geometries from linestring geometries in a DuckDB table using
-the spatial extension. The input linestrings must be closed (first and last points
-must be identical). Returns the result as an \code{sf} object or creates a new table
-in the database.
+Converts a single closed linestring geometry into a polygon. The linestring
+must be closed (first and last points identical). Does not work with
+MULTILINESTRING inputs - use \code{\link[=ddbs_polygonize]{ddbs_polygonize()}} or \code{\link[=ddbs_build_area]{ddbs_build_area()}} instead.
 }
 \examples{
 \dontrun{
-## load packages
+## load package
 library(duckspatial)
-library(sf)
 
 # create a duckdb database in memory (with spatial extension)
 conn <- ddbs_create_conn(dbdir = "memory")
 
 ## read data
-argentina_sf <- st_read(system.file("spatial/argentina.geojson", package = "duckspatial"))
+argentina_ddbs <- ddbs_open_dataset(
+  system.file("spatial/argentina.geojson", 
+  package = "duckspatial")
+)
 
 ## store in duckdb
-ddbs_write_vector(conn, argentina_sf, "argentina")
+ddbs_write_vector(conn, argentina_ddbs, "argentina")
 
 ## extract exterior ring as linestring, then convert back to polygon
-ring_sf <- ddbs_exterior_ring(conn = conn, "argentina")
-ddbs_make_polygon(conn = conn, ring_sf, name = "argentina_poly")
+ring_ddbs <- ddbs_exterior_ring(conn = conn, "argentina")
+ddbs_make_polygon(conn = conn, ring_ddbs, name = "argentina_poly")
 
 ## create polygon without using a connection
-ddbs_make_polygon(ring_sf)
+ddbs_make_polygon(ring_ddbs)
 }
 }
+\seealso{
+\code{\link[=ddbs_polygonize]{ddbs_polygonize()}}, \code{\link[=ddbs_build_area]{ddbs_build_area()}}
+
+Other polygon construction: 
+\code{\link{ddbs_build_area}()},
+\code{\link{ddbs_polygonize}()}
+}
+\concept{polygon construction}

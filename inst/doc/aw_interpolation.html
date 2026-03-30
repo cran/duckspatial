@@ -1,54 +1,27 @@
 <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
-<html>
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.24">
 
-<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta charset="utf-8" />
-<meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
-
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-
-
-<meta name="date" content="2026-01-10" />
+<meta name="dcterms.date" content="2026-03-30">
 
 <title>Areal Interpolation</title>
-
-<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
-// be compatible with the behavior of Pandoc < 2.8).
-document.addEventListener('DOMContentLoaded', function(e) {
-  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
-  var i, h, a;
-  for (i = 0; i < hs.length; i++) {
-    h = hs[i];
-    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
-    a = h.attributes;
-    while (a.length > 0) h.removeAttribute(a[0].name);
-  }
-});
-</script>
-
-<style type="text/css">
+<style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
-</style>
-
-
-
-<style type="text/css">
-code {
-white-space: pre;
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1em;  vertical-align: middle;
 }
-.sourceCode {
-overflow: visible;
-}
-</style>
-<style type="text/css" data-origin="pandoc">
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
 html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
@@ -76,74 +49,28 @@ border: none; display: inline-block;
 -khtml-user-select: none; -moz-user-select: none;
 -ms-user-select: none; user-select: none;
 padding: 0 4px; width: 4em;
-color: #aaaaaa;
 }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+pre.numberSource { margin-left: 3em; padding-left: 4px; }
 div.sourceCode
 { }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } 
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.at { color: #7d9029; } 
-code span.bn { color: #40a070; } 
-code span.bu { color: #008000; } 
-code span.cf { color: #007020; font-weight: bold; } 
-code span.ch { color: #4070a0; } 
-code span.cn { color: #880000; } 
-code span.co { color: #60a0b0; font-style: italic; } 
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.do { color: #ba2121; font-style: italic; } 
-code span.dt { color: #902000; } 
-code span.dv { color: #40a070; } 
-code span.er { color: #ff0000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #40a070; } 
-code span.fu { color: #06287e; } 
-code span.im { color: #008000; font-weight: bold; } 
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.kw { color: #007020; font-weight: bold; } 
-code span.op { color: #666666; } 
-code span.ot { color: #007020; } 
-code span.pp { color: #bc7a00; } 
-code span.sc { color: #4070a0; } 
-code span.ss { color: #bb6688; } 
-code span.st { color: #4070a0; } 
-code span.va { color: #19177c; } 
-code span.vs { color: #4070a0; } 
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
-<script>
-// apply pandoc div.sourceCode style to pre.sourceCode instead
-(function() {
-  var sheets = document.styleSheets;
-  for (var i = 0; i < sheets.length; i++) {
-    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
-    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    var j = 0;
-    while (j < rules.length) {
-      var rule = rules[j];
-      // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
-        j++;
-        continue;
-      }
-      var style = rule.style.cssText;
-      // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') {
-        j++;
-        continue;
-      }
-      // replace div.sourceCode by a pre.sourceCode rule
-      sheets[i].deleteRule(j);
-      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
-    }
-  }
-})();
+
+
+<script>/**
+ * @popperjs/core v2.11.7 - MIT License
+ */
+
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((e="undefined"!=typeof globalThis?globalThis:e||self).Popper={})}(this,(function(e){"use strict";function t(e){if(null==e)return window;if("[object Window]"!==e.toString()){var t=e.ownerDocument;return t&&t.defaultView||window}return e}function n(e){return e instanceof t(e).Element||e instanceof Element}function r(e){return e instanceof t(e).HTMLElement||e instanceof HTMLElement}function o(e){return"undefined"!=typeof ShadowRoot&&(e instanceof t(e).ShadowRoot||e instanceof ShadowRoot)}var i=Math.max,a=Math.min,s=Math.round;function f(){var e=navigator.userAgentData;return null!=e&&e.brands&&Array.isArray(e.brands)?e.brands.map((function(e){return e.brand+"/"+e.version})).join(" "):navigator.userAgent}function c(){return!/^((?!chrome|android).)*safari/i.test(f())}function p(e,o,i){void 0===o&&(o=!1),void 0===i&&(i=!1);var a=e.getBoundingClientRect(),f=1,p=1;o&&r(e)&&(f=e.offsetWidth>0&&s(a.width)/e.offsetWidth||1,p=e.offsetHeight>0&&s(a.height)/e.offsetHeight||1);var u=(n(e)?t(e):window).visualViewport,l=!c()&&i,d=(a.left+(l&&u?u.offsetLeft:0))/f,h=(a.top+(l&&u?u.offsetTop:0))/p,m=a.width/f,v=a.height/p;return{width:m,height:v,top:h,right:d+m,bottom:h+v,left:d,x:d,y:h}}function u(e){var n=t(e);return{scrollLeft:n.pageXOffset,scrollTop:n.pageYOffset}}function l(e){return e?(e.nodeName||"").toLowerCase():null}function d(e){return((n(e)?e.ownerDocument:e.document)||window.document).documentElement}function h(e){return p(d(e)).left+u(e).scrollLeft}function m(e){return t(e).getComputedStyle(e)}function v(e){var t=m(e),n=t.overflow,r=t.overflowX,o=t.overflowY;return/auto|scroll|overlay|hidden/.test(n+o+r)}function y(e,n,o){void 0===o&&(o=!1);var i,a,f=r(n),c=r(n)&&function(e){var t=e.getBoundingClientRect(),n=s(t.width)/e.offsetWidth||1,r=s(t.height)/e.offsetHeight||1;return 1!==n||1!==r}(n),m=d(n),y=p(e,c,o),g={scrollLeft:0,scrollTop:0},b={x:0,y:0};return(f||!f&&!o)&&(("body"!==l(n)||v(m))&&(g=(i=n)!==t(i)&&r(i)?{scrollLeft:(a=i).scrollLeft,scrollTop:a.scrollTop}:u(i)),r(n)?((b=p(n,!0)).x+=n.clientLeft,b.y+=n.clientTop):m&&(b.x=h(m))),{x:y.left+g.scrollLeft-b.x,y:y.top+g.scrollTop-b.y,width:y.width,height:y.height}}function g(e){var t=p(e),n=e.offsetWidth,r=e.offsetHeight;return Math.abs(t.width-n)<=1&&(n=t.width),Math.abs(t.height-r)<=1&&(r=t.height),{x:e.offsetLeft,y:e.offsetTop,width:n,height:r}}function b(e){return"html"===l(e)?e:e.assignedSlot||e.parentNode||(o(e)?e.host:null)||d(e)}function x(e){return["html","body","#document"].indexOf(l(e))>=0?e.ownerDocument.body:r(e)&&v(e)?e:x(b(e))}function w(e,n){var r;void 0===n&&(n=[]);var o=x(e),i=o===(null==(r=e.ownerDocument)?void 0:r.body),a=t(o),s=i?[a].concat(a.visualViewport||[],v(o)?o:[]):o,f=n.concat(s);return i?f:f.concat(w(b(s)))}function O(e){return["table","td","th"].indexOf(l(e))>=0}function j(e){return r(e)&&"fixed"!==m(e).position?e.offsetParent:null}function E(e){for(var n=t(e),i=j(e);i&&O(i)&&"static"===m(i).position;)i=j(i);return i&&("html"===l(i)||"body"===l(i)&&"static"===m(i).position)?n:i||function(e){var t=/firefox/i.test(f());if(/Trident/i.test(f())&&r(e)&&"fixed"===m(e).position)return null;var n=b(e);for(o(n)&&(n=n.host);r(n)&&["html","body"].indexOf(l(n))<0;){var i=m(n);if("none"!==i.transform||"none"!==i.perspective||"paint"===i.contain||-1!==["transform","perspective"].indexOf(i.willChange)||t&&"filter"===i.willChange||t&&i.filter&&"none"!==i.filter)return n;n=n.parentNode}return null}(e)||n}var D="top",A="bottom",L="right",P="left",M="auto",k=[D,A,L,P],W="start",B="end",H="viewport",T="popper",R=k.reduce((function(e,t){return e.concat([t+"-"+W,t+"-"+B])}),[]),S=[].concat(k,[M]).reduce((function(e,t){return e.concat([t,t+"-"+W,t+"-"+B])}),[]),V=["beforeRead","read","afterRead","beforeMain","main","afterMain","beforeWrite","write","afterWrite"];function q(e){var t=new Map,n=new Set,r=[];function o(e){n.add(e.name),[].concat(e.requires||[],e.requiresIfExists||[]).forEach((function(e){if(!n.has(e)){var r=t.get(e);r&&o(r)}})),r.push(e)}return e.forEach((function(e){t.set(e.name,e)})),e.forEach((function(e){n.has(e.name)||o(e)})),r}function C(e){return e.split("-")[0]}function N(e,t){var n=t.getRootNode&&t.getRootNode();if(e.contains(t))return!0;if(n&&o(n)){var r=t;do{if(r&&e.isSameNode(r))return!0;r=r.parentNode||r.host}while(r)}return!1}function I(e){return Object.assign({},e,{left:e.x,top:e.y,right:e.x+e.width,bottom:e.y+e.height})}function _(e,r,o){return r===H?I(function(e,n){var r=t(e),o=d(e),i=r.visualViewport,a=o.clientWidth,s=o.clientHeight,f=0,p=0;if(i){a=i.width,s=i.height;var u=c();(u||!u&&"fixed"===n)&&(f=i.offsetLeft,p=i.offsetTop)}return{width:a,height:s,x:f+h(e),y:p}}(e,o)):n(r)?function(e,t){var n=p(e,!1,"fixed"===t);return n.top=n.top+e.clientTop,n.left=n.left+e.clientLeft,n.bottom=n.top+e.clientHeight,n.right=n.left+e.clientWidth,n.width=e.clientWidth,n.height=e.clientHeight,n.x=n.left,n.y=n.top,n}(r,o):I(function(e){var t,n=d(e),r=u(e),o=null==(t=e.ownerDocument)?void 0:t.body,a=i(n.scrollWidth,n.clientWidth,o?o.scrollWidth:0,o?o.clientWidth:0),s=i(n.scrollHeight,n.clientHeight,o?o.scrollHeight:0,o?o.clientHeight:0),f=-r.scrollLeft+h(e),c=-r.scrollTop;return"rtl"===m(o||n).direction&&(f+=i(n.clientWidth,o?o.clientWidth:0)-a),{width:a,height:s,x:f,y:c}}(d(e)))}function F(e,t,o,s){var f="clippingParents"===t?function(e){var t=w(b(e)),o=["absolute","fixed"].indexOf(m(e).position)>=0&&r(e)?E(e):e;return n(o)?t.filter((function(e){return n(e)&&N(e,o)&&"body"!==l(e)})):[]}(e):[].concat(t),c=[].concat(f,[o]),p=c[0],u=c.reduce((function(t,n){var r=_(e,n,s);return t.top=i(r.top,t.top),t.right=a(r.right,t.right),t.bottom=a(r.bottom,t.bottom),t.left=i(r.left,t.left),t}),_(e,p,s));return u.width=u.right-u.left,u.height=u.bottom-u.top,u.x=u.left,u.y=u.top,u}function U(e){return e.split("-")[1]}function z(e){return["top","bottom"].indexOf(e)>=0?"x":"y"}function X(e){var t,n=e.reference,r=e.element,o=e.placement,i=o?C(o):null,a=o?U(o):null,s=n.x+n.width/2-r.width/2,f=n.y+n.height/2-r.height/2;switch(i){case D:t={x:s,y:n.y-r.height};break;case A:t={x:s,y:n.y+n.height};break;case L:t={x:n.x+n.width,y:f};break;case P:t={x:n.x-r.width,y:f};break;default:t={x:n.x,y:n.y}}var c=i?z(i):null;if(null!=c){var p="y"===c?"height":"width";switch(a){case W:t[c]=t[c]-(n[p]/2-r[p]/2);break;case B:t[c]=t[c]+(n[p]/2-r[p]/2)}}return t}function Y(e){return Object.assign({},{top:0,right:0,bottom:0,left:0},e)}function G(e,t){return t.reduce((function(t,n){return t[n]=e,t}),{})}function J(e,t){void 0===t&&(t={});var r=t,o=r.placement,i=void 0===o?e.placement:o,a=r.strategy,s=void 0===a?e.strategy:a,f=r.boundary,c=void 0===f?"clippingParents":f,u=r.rootBoundary,l=void 0===u?H:u,h=r.elementContext,m=void 0===h?T:h,v=r.altBoundary,y=void 0!==v&&v,g=r.padding,b=void 0===g?0:g,x=Y("number"!=typeof b?b:G(b,k)),w=m===T?"reference":T,O=e.rects.popper,j=e.elements[y?w:m],E=F(n(j)?j:j.contextElement||d(e.elements.popper),c,l,s),P=p(e.elements.reference),M=X({reference:P,element:O,strategy:"absolute",placement:i}),W=I(Object.assign({},O,M)),B=m===T?W:P,R={top:E.top-B.top+x.top,bottom:B.bottom-E.bottom+x.bottom,left:E.left-B.left+x.left,right:B.right-E.right+x.right},S=e.modifiersData.offset;if(m===T&&S){var V=S[i];Object.keys(R).forEach((function(e){var t=[L,A].indexOf(e)>=0?1:-1,n=[D,A].indexOf(e)>=0?"y":"x";R[e]+=V[n]*t}))}return R}var K={placement:"bottom",modifiers:[],strategy:"absolute"};function Q(){for(var e=arguments.length,t=new Array(e),n=0;n<e;n++)t[n]=arguments[n];return!t.some((function(e){return!(e&&"function"==typeof e.getBoundingClientRect)}))}function Z(e){void 0===e&&(e={});var t=e,r=t.defaultModifiers,o=void 0===r?[]:r,i=t.defaultOptions,a=void 0===i?K:i;return function(e,t,r){void 0===r&&(r=a);var i,s,f={placement:"bottom",orderedModifiers:[],options:Object.assign({},K,a),modifiersData:{},elements:{reference:e,popper:t},attributes:{},styles:{}},c=[],p=!1,u={state:f,setOptions:function(r){var i="function"==typeof r?r(f.options):r;l(),f.options=Object.assign({},a,f.options,i),f.scrollParents={reference:n(e)?w(e):e.contextElement?w(e.contextElement):[],popper:w(t)};var s,p,d=function(e){var t=q(e);return V.reduce((function(e,n){return e.concat(t.filter((function(e){return e.phase===n})))}),[])}((s=[].concat(o,f.options.modifiers),p=s.reduce((function(e,t){var n=e[t.name];return e[t.name]=n?Object.assign({},n,t,{options:Object.assign({},n.options,t.options),data:Object.assign({},n.data,t.data)}):t,e}),{}),Object.keys(p).map((function(e){return p[e]}))));return f.orderedModifiers=d.filter((function(e){return e.enabled})),f.orderedModifiers.forEach((function(e){var t=e.name,n=e.options,r=void 0===n?{}:n,o=e.effect;if("function"==typeof o){var i=o({state:f,name:t,instance:u,options:r}),a=function(){};c.push(i||a)}})),u.update()},forceUpdate:function(){if(!p){var e=f.elements,t=e.reference,n=e.popper;if(Q(t,n)){f.rects={reference:y(t,E(n),"fixed"===f.options.strategy),popper:g(n)},f.reset=!1,f.placement=f.options.placement,f.orderedModifiers.forEach((function(e){return f.modifiersData[e.name]=Object.assign({},e.data)}));for(var r=0;r<f.orderedModifiers.length;r++)if(!0!==f.reset){var o=f.orderedModifiers[r],i=o.fn,a=o.options,s=void 0===a?{}:a,c=o.name;"function"==typeof i&&(f=i({state:f,options:s,name:c,instance:u})||f)}else f.reset=!1,r=-1}}},update:(i=function(){return new Promise((function(e){u.forceUpdate(),e(f)}))},function(){return s||(s=new Promise((function(e){Promise.resolve().then((function(){s=void 0,e(i())}))}))),s}),destroy:function(){l(),p=!0}};if(!Q(e,t))return u;function l(){c.forEach((function(e){return e()})),c=[]}return u.setOptions(r).then((function(e){!p&&r.onFirstUpdate&&r.onFirstUpdate(e)})),u}}var $={passive:!0};var ee={name:"eventListeners",enabled:!0,phase:"write",fn:function(){},effect:function(e){var n=e.state,r=e.instance,o=e.options,i=o.scroll,a=void 0===i||i,s=o.resize,f=void 0===s||s,c=t(n.elements.popper),p=[].concat(n.scrollParents.reference,n.scrollParents.popper);return a&&p.forEach((function(e){e.addEventListener("scroll",r.update,$)})),f&&c.addEventListener("resize",r.update,$),function(){a&&p.forEach((function(e){e.removeEventListener("scroll",r.update,$)})),f&&c.removeEventListener("resize",r.update,$)}},data:{}};var te={name:"popperOffsets",enabled:!0,phase:"read",fn:function(e){var t=e.state,n=e.name;t.modifiersData[n]=X({reference:t.rects.reference,element:t.rects.popper,strategy:"absolute",placement:t.placement})},data:{}},ne={top:"auto",right:"auto",bottom:"auto",left:"auto"};function re(e){var n,r=e.popper,o=e.popperRect,i=e.placement,a=e.variation,f=e.offsets,c=e.position,p=e.gpuAcceleration,u=e.adaptive,l=e.roundOffsets,h=e.isFixed,v=f.x,y=void 0===v?0:v,g=f.y,b=void 0===g?0:g,x="function"==typeof l?l({x:y,y:b}):{x:y,y:b};y=x.x,b=x.y;var w=f.hasOwnProperty("x"),O=f.hasOwnProperty("y"),j=P,M=D,k=window;if(u){var W=E(r),H="clientHeight",T="clientWidth";if(W===t(r)&&"static"!==m(W=d(r)).position&&"absolute"===c&&(H="scrollHeight",T="scrollWidth"),W=W,i===D||(i===P||i===L)&&a===B)M=A,b-=(h&&W===k&&k.visualViewport?k.visualViewport.height:W[H])-o.height,b*=p?1:-1;if(i===P||(i===D||i===A)&&a===B)j=L,y-=(h&&W===k&&k.visualViewport?k.visualViewport.width:W[T])-o.width,y*=p?1:-1}var R,S=Object.assign({position:c},u&&ne),V=!0===l?function(e,t){var n=e.x,r=e.y,o=t.devicePixelRatio||1;return{x:s(n*o)/o||0,y:s(r*o)/o||0}}({x:y,y:b},t(r)):{x:y,y:b};return y=V.x,b=V.y,p?Object.assign({},S,((R={})[M]=O?"0":"",R[j]=w?"0":"",R.transform=(k.devicePixelRatio||1)<=1?"translate("+y+"px, "+b+"px)":"translate3d("+y+"px, "+b+"px, 0)",R)):Object.assign({},S,((n={})[M]=O?b+"px":"",n[j]=w?y+"px":"",n.transform="",n))}var oe={name:"computeStyles",enabled:!0,phase:"beforeWrite",fn:function(e){var t=e.state,n=e.options,r=n.gpuAcceleration,o=void 0===r||r,i=n.adaptive,a=void 0===i||i,s=n.roundOffsets,f=void 0===s||s,c={placement:C(t.placement),variation:U(t.placement),popper:t.elements.popper,popperRect:t.rects.popper,gpuAcceleration:o,isFixed:"fixed"===t.options.strategy};null!=t.modifiersData.popperOffsets&&(t.styles.popper=Object.assign({},t.styles.popper,re(Object.assign({},c,{offsets:t.modifiersData.popperOffsets,position:t.options.strategy,adaptive:a,roundOffsets:f})))),null!=t.modifiersData.arrow&&(t.styles.arrow=Object.assign({},t.styles.arrow,re(Object.assign({},c,{offsets:t.modifiersData.arrow,position:"absolute",adaptive:!1,roundOffsets:f})))),t.attributes.popper=Object.assign({},t.attributes.popper,{"data-popper-placement":t.placement})},data:{}};var ie={name:"applyStyles",enabled:!0,phase:"write",fn:function(e){var t=e.state;Object.keys(t.elements).forEach((function(e){var n=t.styles[e]||{},o=t.attributes[e]||{},i=t.elements[e];r(i)&&l(i)&&(Object.assign(i.style,n),Object.keys(o).forEach((function(e){var t=o[e];!1===t?i.removeAttribute(e):i.setAttribute(e,!0===t?"":t)})))}))},effect:function(e){var t=e.state,n={popper:{position:t.options.strategy,left:"0",top:"0",margin:"0"},arrow:{position:"absolute"},reference:{}};return Object.assign(t.elements.popper.style,n.popper),t.styles=n,t.elements.arrow&&Object.assign(t.elements.arrow.style,n.arrow),function(){Object.keys(t.elements).forEach((function(e){var o=t.elements[e],i=t.attributes[e]||{},a=Object.keys(t.styles.hasOwnProperty(e)?t.styles[e]:n[e]).reduce((function(e,t){return e[t]="",e}),{});r(o)&&l(o)&&(Object.assign(o.style,a),Object.keys(i).forEach((function(e){o.removeAttribute(e)})))}))}},requires:["computeStyles"]};var ae={name:"offset",enabled:!0,phase:"main",requires:["popperOffsets"],fn:function(e){var t=e.state,n=e.options,r=e.name,o=n.offset,i=void 0===o?[0,0]:o,a=S.reduce((function(e,n){return e[n]=function(e,t,n){var r=C(e),o=[P,D].indexOf(r)>=0?-1:1,i="function"==typeof n?n(Object.assign({},t,{placement:e})):n,a=i[0],s=i[1];return a=a||0,s=(s||0)*o,[P,L].indexOf(r)>=0?{x:s,y:a}:{x:a,y:s}}(n,t.rects,i),e}),{}),s=a[t.placement],f=s.x,c=s.y;null!=t.modifiersData.popperOffsets&&(t.modifiersData.popperOffsets.x+=f,t.modifiersData.popperOffsets.y+=c),t.modifiersData[r]=a}},se={left:"right",right:"left",bottom:"top",top:"bottom"};function fe(e){return e.replace(/left|right|bottom|top/g,(function(e){return se[e]}))}var ce={start:"end",end:"start"};function pe(e){return e.replace(/start|end/g,(function(e){return ce[e]}))}function ue(e,t){void 0===t&&(t={});var n=t,r=n.placement,o=n.boundary,i=n.rootBoundary,a=n.padding,s=n.flipVariations,f=n.allowedAutoPlacements,c=void 0===f?S:f,p=U(r),u=p?s?R:R.filter((function(e){return U(e)===p})):k,l=u.filter((function(e){return c.indexOf(e)>=0}));0===l.length&&(l=u);var d=l.reduce((function(t,n){return t[n]=J(e,{placement:n,boundary:o,rootBoundary:i,padding:a})[C(n)],t}),{});return Object.keys(d).sort((function(e,t){return d[e]-d[t]}))}var le={name:"flip",enabled:!0,phase:"main",fn:function(e){var t=e.state,n=e.options,r=e.name;if(!t.modifiersData[r]._skip){for(var o=n.mainAxis,i=void 0===o||o,a=n.altAxis,s=void 0===a||a,f=n.fallbackPlacements,c=n.padding,p=n.boundary,u=n.rootBoundary,l=n.altBoundary,d=n.flipVariations,h=void 0===d||d,m=n.allowedAutoPlacements,v=t.options.placement,y=C(v),g=f||(y===v||!h?[fe(v)]:function(e){if(C(e)===M)return[];var t=fe(e);return[pe(e),t,pe(t)]}(v)),b=[v].concat(g).reduce((function(e,n){return e.concat(C(n)===M?ue(t,{placement:n,boundary:p,rootBoundary:u,padding:c,flipVariations:h,allowedAutoPlacements:m}):n)}),[]),x=t.rects.reference,w=t.rects.popper,O=new Map,j=!0,E=b[0],k=0;k<b.length;k++){var B=b[k],H=C(B),T=U(B)===W,R=[D,A].indexOf(H)>=0,S=R?"width":"height",V=J(t,{placement:B,boundary:p,rootBoundary:u,altBoundary:l,padding:c}),q=R?T?L:P:T?A:D;x[S]>w[S]&&(q=fe(q));var N=fe(q),I=[];if(i&&I.push(V[H]<=0),s&&I.push(V[q]<=0,V[N]<=0),I.every((function(e){return e}))){E=B,j=!1;break}O.set(B,I)}if(j)for(var _=function(e){var t=b.find((function(t){var n=O.get(t);if(n)return n.slice(0,e).every((function(e){return e}))}));if(t)return E=t,"break"},F=h?3:1;F>0;F--){if("break"===_(F))break}t.placement!==E&&(t.modifiersData[r]._skip=!0,t.placement=E,t.reset=!0)}},requiresIfExists:["offset"],data:{_skip:!1}};function de(e,t,n){return i(e,a(t,n))}var he={name:"preventOverflow",enabled:!0,phase:"main",fn:function(e){var t=e.state,n=e.options,r=e.name,o=n.mainAxis,s=void 0===o||o,f=n.altAxis,c=void 0!==f&&f,p=n.boundary,u=n.rootBoundary,l=n.altBoundary,d=n.padding,h=n.tether,m=void 0===h||h,v=n.tetherOffset,y=void 0===v?0:v,b=J(t,{boundary:p,rootBoundary:u,padding:d,altBoundary:l}),x=C(t.placement),w=U(t.placement),O=!w,j=z(x),M="x"===j?"y":"x",k=t.modifiersData.popperOffsets,B=t.rects.reference,H=t.rects.popper,T="function"==typeof y?y(Object.assign({},t.rects,{placement:t.placement})):y,R="number"==typeof T?{mainAxis:T,altAxis:T}:Object.assign({mainAxis:0,altAxis:0},T),S=t.modifiersData.offset?t.modifiersData.offset[t.placement]:null,V={x:0,y:0};if(k){if(s){var q,N="y"===j?D:P,I="y"===j?A:L,_="y"===j?"height":"width",F=k[j],X=F+b[N],Y=F-b[I],G=m?-H[_]/2:0,K=w===W?B[_]:H[_],Q=w===W?-H[_]:-B[_],Z=t.elements.arrow,$=m&&Z?g(Z):{width:0,height:0},ee=t.modifiersData["arrow#persistent"]?t.modifiersData["arrow#persistent"].padding:{top:0,right:0,bottom:0,left:0},te=ee[N],ne=ee[I],re=de(0,B[_],$[_]),oe=O?B[_]/2-G-re-te-R.mainAxis:K-re-te-R.mainAxis,ie=O?-B[_]/2+G+re+ne+R.mainAxis:Q+re+ne+R.mainAxis,ae=t.elements.arrow&&E(t.elements.arrow),se=ae?"y"===j?ae.clientTop||0:ae.clientLeft||0:0,fe=null!=(q=null==S?void 0:S[j])?q:0,ce=F+ie-fe,pe=de(m?a(X,F+oe-fe-se):X,F,m?i(Y,ce):Y);k[j]=pe,V[j]=pe-F}if(c){var ue,le="x"===j?D:P,he="x"===j?A:L,me=k[M],ve="y"===M?"height":"width",ye=me+b[le],ge=me-b[he],be=-1!==[D,P].indexOf(x),xe=null!=(ue=null==S?void 0:S[M])?ue:0,we=be?ye:me-B[ve]-H[ve]-xe+R.altAxis,Oe=be?me+B[ve]+H[ve]-xe-R.altAxis:ge,je=m&&be?function(e,t,n){var r=de(e,t,n);return r>n?n:r}(we,me,Oe):de(m?we:ye,me,m?Oe:ge);k[M]=je,V[M]=je-me}t.modifiersData[r]=V}},requiresIfExists:["offset"]};var me={name:"arrow",enabled:!0,phase:"main",fn:function(e){var t,n=e.state,r=e.name,o=e.options,i=n.elements.arrow,a=n.modifiersData.popperOffsets,s=C(n.placement),f=z(s),c=[P,L].indexOf(s)>=0?"height":"width";if(i&&a){var p=function(e,t){return Y("number"!=typeof(e="function"==typeof e?e(Object.assign({},t.rects,{placement:t.placement})):e)?e:G(e,k))}(o.padding,n),u=g(i),l="y"===f?D:P,d="y"===f?A:L,h=n.rects.reference[c]+n.rects.reference[f]-a[f]-n.rects.popper[c],m=a[f]-n.rects.reference[f],v=E(i),y=v?"y"===f?v.clientHeight||0:v.clientWidth||0:0,b=h/2-m/2,x=p[l],w=y-u[c]-p[d],O=y/2-u[c]/2+b,j=de(x,O,w),M=f;n.modifiersData[r]=((t={})[M]=j,t.centerOffset=j-O,t)}},effect:function(e){var t=e.state,n=e.options.element,r=void 0===n?"[data-popper-arrow]":n;null!=r&&("string"!=typeof r||(r=t.elements.popper.querySelector(r)))&&N(t.elements.popper,r)&&(t.elements.arrow=r)},requires:["popperOffsets"],requiresIfExists:["preventOverflow"]};function ve(e,t,n){return void 0===n&&(n={x:0,y:0}),{top:e.top-t.height-n.y,right:e.right-t.width+n.x,bottom:e.bottom-t.height+n.y,left:e.left-t.width-n.x}}function ye(e){return[D,L,A,P].some((function(t){return e[t]>=0}))}var ge={name:"hide",enabled:!0,phase:"main",requiresIfExists:["preventOverflow"],fn:function(e){var t=e.state,n=e.name,r=t.rects.reference,o=t.rects.popper,i=t.modifiersData.preventOverflow,a=J(t,{elementContext:"reference"}),s=J(t,{altBoundary:!0}),f=ve(a,r),c=ve(s,o,i),p=ye(f),u=ye(c);t.modifiersData[n]={referenceClippingOffsets:f,popperEscapeOffsets:c,isReferenceHidden:p,hasPopperEscaped:u},t.attributes.popper=Object.assign({},t.attributes.popper,{"data-popper-reference-hidden":p,"data-popper-escaped":u})}},be=Z({defaultModifiers:[ee,te,oe,ie]}),xe=[ee,te,oe,ie,ae,le,he,me,ge],we=Z({defaultModifiers:xe});e.applyStyles=ie,e.arrow=me,e.computeStyles=oe,e.createPopper=we,e.createPopperLite=be,e.defaultModifiers=xe,e.detectOverflow=J,e.eventListeners=ee,e.flip=le,e.hide=ge,e.offset=ae,e.popperGenerator=Z,e.popperOffsets=te,e.preventOverflow=he,Object.defineProperty(e,"__esModule",{value:!0})}));
+
 </script>
+<script>!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t(require("@popperjs/core")):"function"==typeof define&&define.amd?define(["@popperjs/core"],t):(e=e||self).tippy=t(e.Popper)}(this,(function(e){"use strict";var t={passive:!0,capture:!0},n=function(){return document.body};function r(e,t,n){if(Array.isArray(e)){var r=e[t];return null==r?Array.isArray(n)?n[t]:n:r}return e}function o(e,t){var n={}.toString.call(e);return 0===n.indexOf("[object")&&n.indexOf(t+"]")>-1}function i(e,t){return"function"==typeof e?e.apply(void 0,t):e}function a(e,t){return 0===t?e:function(r){clearTimeout(n),n=setTimeout((function(){e(r)}),t)};var n}function s(e,t){var n=Object.assign({},e);return t.forEach((function(e){delete n[e]})),n}function u(e){return[].concat(e)}function c(e,t){-1===e.indexOf(t)&&e.push(t)}function p(e){return e.split("-")[0]}function f(e){return[].slice.call(e)}function l(e){return Object.keys(e).reduce((function(t,n){return void 0!==e[n]&&(t[n]=e[n]),t}),{})}function d(){return document.createElement("div")}function v(e){return["Element","Fragment"].some((function(t){return o(e,t)}))}function m(e){return o(e,"MouseEvent")}function g(e){return!(!e||!e._tippy||e._tippy.reference!==e)}function h(e){return v(e)?[e]:function(e){return o(e,"NodeList")}(e)?f(e):Array.isArray(e)?e:f(document.querySelectorAll(e))}function b(e,t){e.forEach((function(e){e&&(e.style.transitionDuration=t+"ms")}))}function y(e,t){e.forEach((function(e){e&&e.setAttribute("data-state",t)}))}function w(e){var t,n=u(e)[0];return null!=n&&null!=(t=n.ownerDocument)&&t.body?n.ownerDocument:document}function E(e,t,n){var r=t+"EventListener";["transitionend","webkitTransitionEnd"].forEach((function(t){e[r](t,n)}))}function O(e,t){for(var n=t;n;){var r;if(e.contains(n))return!0;n=null==n.getRootNode||null==(r=n.getRootNode())?void 0:r.host}return!1}var x={isTouch:!1},C=0;function T(){x.isTouch||(x.isTouch=!0,window.performance&&document.addEventListener("mousemove",A))}function A(){var e=performance.now();e-C<20&&(x.isTouch=!1,document.removeEventListener("mousemove",A)),C=e}function L(){var e=document.activeElement;if(g(e)){var t=e._tippy;e.blur&&!t.state.isVisible&&e.blur()}}var D=!!("undefined"!=typeof window&&"undefined"!=typeof document)&&!!window.msCrypto,R=Object.assign({appendTo:n,aria:{content:"auto",expanded:"auto"},delay:0,duration:[300,250],getReferenceClientRect:null,hideOnClick:!0,ignoreAttributes:!1,interactive:!1,interactiveBorder:2,interactiveDebounce:0,moveTransition:"",offset:[0,10],onAfterUpdate:function(){},onBeforeUpdate:function(){},onCreate:function(){},onDestroy:function(){},onHidden:function(){},onHide:function(){},onMount:function(){},onShow:function(){},onShown:function(){},onTrigger:function(){},onUntrigger:function(){},onClickOutside:function(){},placement:"top",plugins:[],popperOptions:{},render:null,showOnCreate:!1,touch:!0,trigger:"mouseenter focus",triggerTarget:null},{animateFill:!1,followCursor:!1,inlinePositioning:!1,sticky:!1},{allowHTML:!1,animation:"fade",arrow:!0,content:"",inertia:!1,maxWidth:350,role:"tooltip",theme:"",zIndex:9999}),k=Object.keys(R);function P(e){var t=(e.plugins||[]).reduce((function(t,n){var r,o=n.name,i=n.defaultValue;o&&(t[o]=void 0!==e[o]?e[o]:null!=(r=R[o])?r:i);return t}),{});return Object.assign({},e,t)}function j(e,t){var n=Object.assign({},t,{content:i(t.content,[e])},t.ignoreAttributes?{}:function(e,t){return(t?Object.keys(P(Object.assign({},R,{plugins:t}))):k).reduce((function(t,n){var r=(e.getAttribute("data-tippy-"+n)||"").trim();if(!r)return t;if("content"===n)t[n]=r;else try{t[n]=JSON.parse(r)}catch(e){t[n]=r}return t}),{})}(e,t.plugins));return n.aria=Object.assign({},R.aria,n.aria),n.aria={expanded:"auto"===n.aria.expanded?t.interactive:n.aria.expanded,content:"auto"===n.aria.content?t.interactive?null:"describedby":n.aria.content},n}function M(e,t){e.innerHTML=t}function V(e){var t=d();return!0===e?t.className="tippy-arrow":(t.className="tippy-svg-arrow",v(e)?t.appendChild(e):M(t,e)),t}function I(e,t){v(t.content)?(M(e,""),e.appendChild(t.content)):"function"!=typeof t.content&&(t.allowHTML?M(e,t.content):e.textContent=t.content)}function S(e){var t=e.firstElementChild,n=f(t.children);return{box:t,content:n.find((function(e){return e.classList.contains("tippy-content")})),arrow:n.find((function(e){return e.classList.contains("tippy-arrow")||e.classList.contains("tippy-svg-arrow")})),backdrop:n.find((function(e){return e.classList.contains("tippy-backdrop")}))}}function N(e){var t=d(),n=d();n.className="tippy-box",n.setAttribute("data-state","hidden"),n.setAttribute("tabindex","-1");var r=d();function o(n,r){var o=S(t),i=o.box,a=o.content,s=o.arrow;r.theme?i.setAttribute("data-theme",r.theme):i.removeAttribute("data-theme"),"string"==typeof r.animation?i.setAttribute("data-animation",r.animation):i.removeAttribute("data-animation"),r.inertia?i.setAttribute("data-inertia",""):i.removeAttribute("data-inertia"),i.style.maxWidth="number"==typeof r.maxWidth?r.maxWidth+"px":r.maxWidth,r.role?i.setAttribute("role",r.role):i.removeAttribute("role"),n.content===r.content&&n.allowHTML===r.allowHTML||I(a,e.props),r.arrow?s?n.arrow!==r.arrow&&(i.removeChild(s),i.appendChild(V(r.arrow))):i.appendChild(V(r.arrow)):s&&i.removeChild(s)}return r.className="tippy-content",r.setAttribute("data-state","hidden"),I(r,e.props),t.appendChild(n),n.appendChild(r),o(e.props,e.props),{popper:t,onUpdate:o}}N.$$tippy=!0;var B=1,H=[],U=[];function _(o,s){var v,g,h,C,T,A,L,k,M=j(o,Object.assign({},R,P(l(s)))),V=!1,I=!1,N=!1,_=!1,F=[],W=a(we,M.interactiveDebounce),X=B++,Y=(k=M.plugins).filter((function(e,t){return k.indexOf(e)===t})),$={id:X,reference:o,popper:d(),popperInstance:null,props:M,state:{isEnabled:!0,isVisible:!1,isDestroyed:!1,isMounted:!1,isShown:!1},plugins:Y,clearDelayTimeouts:function(){clearTimeout(v),clearTimeout(g),cancelAnimationFrame(h)},setProps:function(e){if($.state.isDestroyed)return;ae("onBeforeUpdate",[$,e]),be();var t=$.props,n=j(o,Object.assign({},t,l(e),{ignoreAttributes:!0}));$.props=n,he(),t.interactiveDebounce!==n.interactiveDebounce&&(ce(),W=a(we,n.interactiveDebounce));t.triggerTarget&&!n.triggerTarget?u(t.triggerTarget).forEach((function(e){e.removeAttribute("aria-expanded")})):n.triggerTarget&&o.removeAttribute("aria-expanded");ue(),ie(),J&&J(t,n);$.popperInstance&&(Ce(),Ae().forEach((function(e){requestAnimationFrame(e._tippy.popperInstance.forceUpdate)})));ae("onAfterUpdate",[$,e])},setContent:function(e){$.setProps({content:e})},show:function(){var e=$.state.isVisible,t=$.state.isDestroyed,o=!$.state.isEnabled,a=x.isTouch&&!$.props.touch,s=r($.props.duration,0,R.duration);if(e||t||o||a)return;if(te().hasAttribute("disabled"))return;if(ae("onShow",[$],!1),!1===$.props.onShow($))return;$.state.isVisible=!0,ee()&&(z.style.visibility="visible");ie(),de(),$.state.isMounted||(z.style.transition="none");if(ee()){var u=re(),p=u.box,f=u.content;b([p,f],0)}A=function(){var e;if($.state.isVisible&&!_){if(_=!0,z.offsetHeight,z.style.transition=$.props.moveTransition,ee()&&$.props.animation){var t=re(),n=t.box,r=t.content;b([n,r],s),y([n,r],"visible")}se(),ue(),c(U,$),null==(e=$.popperInstance)||e.forceUpdate(),ae("onMount",[$]),$.props.animation&&ee()&&function(e,t){me(e,t)}(s,(function(){$.state.isShown=!0,ae("onShown",[$])}))}},function(){var e,t=$.props.appendTo,r=te();e=$.props.interactive&&t===n||"parent"===t?r.parentNode:i(t,[r]);e.contains(z)||e.appendChild(z);$.state.isMounted=!0,Ce()}()},hide:function(){var e=!$.state.isVisible,t=$.state.isDestroyed,n=!$.state.isEnabled,o=r($.props.duration,1,R.duration);if(e||t||n)return;if(ae("onHide",[$],!1),!1===$.props.onHide($))return;$.state.isVisible=!1,$.state.isShown=!1,_=!1,V=!1,ee()&&(z.style.visibility="hidden");if(ce(),ve(),ie(!0),ee()){var i=re(),a=i.box,s=i.content;$.props.animation&&(b([a,s],o),y([a,s],"hidden"))}se(),ue(),$.props.animation?ee()&&function(e,t){me(e,(function(){!$.state.isVisible&&z.parentNode&&z.parentNode.contains(z)&&t()}))}(o,$.unmount):$.unmount()},hideWithInteractivity:function(e){ne().addEventListener("mousemove",W),c(H,W),W(e)},enable:function(){$.state.isEnabled=!0},disable:function(){$.hide(),$.state.isEnabled=!1},unmount:function(){$.state.isVisible&&$.hide();if(!$.state.isMounted)return;Te(),Ae().forEach((function(e){e._tippy.unmount()})),z.parentNode&&z.parentNode.removeChild(z);U=U.filter((function(e){return e!==$})),$.state.isMounted=!1,ae("onHidden",[$])},destroy:function(){if($.state.isDestroyed)return;$.clearDelayTimeouts(),$.unmount(),be(),delete o._tippy,$.state.isDestroyed=!0,ae("onDestroy",[$])}};if(!M.render)return $;var q=M.render($),z=q.popper,J=q.onUpdate;z.setAttribute("data-tippy-root",""),z.id="tippy-"+$.id,$.popper=z,o._tippy=$,z._tippy=$;var G=Y.map((function(e){return e.fn($)})),K=o.hasAttribute("aria-expanded");return he(),ue(),ie(),ae("onCreate",[$]),M.showOnCreate&&Le(),z.addEventListener("mouseenter",(function(){$.props.interactive&&$.state.isVisible&&$.clearDelayTimeouts()})),z.addEventListener("mouseleave",(function(){$.props.interactive&&$.props.trigger.indexOf("mouseenter")>=0&&ne().addEventListener("mousemove",W)})),$;function Q(){var e=$.props.touch;return Array.isArray(e)?e:[e,0]}function Z(){return"hold"===Q()[0]}function ee(){var e;return!(null==(e=$.props.render)||!e.$$tippy)}function te(){return L||o}function ne(){var e=te().parentNode;return e?w(e):document}function re(){return S(z)}function oe(e){return $.state.isMounted&&!$.state.isVisible||x.isTouch||C&&"focus"===C.type?0:r($.props.delay,e?0:1,R.delay)}function ie(e){void 0===e&&(e=!1),z.style.pointerEvents=$.props.interactive&&!e?"":"none",z.style.zIndex=""+$.props.zIndex}function ae(e,t,n){var r;(void 0===n&&(n=!0),G.forEach((function(n){n[e]&&n[e].apply(n,t)})),n)&&(r=$.props)[e].apply(r,t)}function se(){var e=$.props.aria;if(e.content){var t="aria-"+e.content,n=z.id;u($.props.triggerTarget||o).forEach((function(e){var r=e.getAttribute(t);if($.state.isVisible)e.setAttribute(t,r?r+" "+n:n);else{var o=r&&r.replace(n,"").trim();o?e.setAttribute(t,o):e.removeAttribute(t)}}))}}function ue(){!K&&$.props.aria.expanded&&u($.props.triggerTarget||o).forEach((function(e){$.props.interactive?e.setAttribute("aria-expanded",$.state.isVisible&&e===te()?"true":"false"):e.removeAttribute("aria-expanded")}))}function ce(){ne().removeEventListener("mousemove",W),H=H.filter((function(e){return e!==W}))}function pe(e){if(!x.isTouch||!N&&"mousedown"!==e.type){var t=e.composedPath&&e.composedPath()[0]||e.target;if(!$.props.interactive||!O(z,t)){if(u($.props.triggerTarget||o).some((function(e){return O(e,t)}))){if(x.isTouch)return;if($.state.isVisible&&$.props.trigger.indexOf("click")>=0)return}else ae("onClickOutside",[$,e]);!0===$.props.hideOnClick&&($.clearDelayTimeouts(),$.hide(),I=!0,setTimeout((function(){I=!1})),$.state.isMounted||ve())}}}function fe(){N=!0}function le(){N=!1}function de(){var e=ne();e.addEventListener("mousedown",pe,!0),e.addEventListener("touchend",pe,t),e.addEventListener("touchstart",le,t),e.addEventListener("touchmove",fe,t)}function ve(){var e=ne();e.removeEventListener("mousedown",pe,!0),e.removeEventListener("touchend",pe,t),e.removeEventListener("touchstart",le,t),e.removeEventListener("touchmove",fe,t)}function me(e,t){var n=re().box;function r(e){e.target===n&&(E(n,"remove",r),t())}if(0===e)return t();E(n,"remove",T),E(n,"add",r),T=r}function ge(e,t,n){void 0===n&&(n=!1),u($.props.triggerTarget||o).forEach((function(r){r.addEventListener(e,t,n),F.push({node:r,eventType:e,handler:t,options:n})}))}function he(){var e;Z()&&(ge("touchstart",ye,{passive:!0}),ge("touchend",Ee,{passive:!0})),(e=$.props.trigger,e.split(/\s+/).filter(Boolean)).forEach((function(e){if("manual"!==e)switch(ge(e,ye),e){case"mouseenter":ge("mouseleave",Ee);break;case"focus":ge(D?"focusout":"blur",Oe);break;case"focusin":ge("focusout",Oe)}}))}function be(){F.forEach((function(e){var t=e.node,n=e.eventType,r=e.handler,o=e.options;t.removeEventListener(n,r,o)})),F=[]}function ye(e){var t,n=!1;if($.state.isEnabled&&!xe(e)&&!I){var r="focus"===(null==(t=C)?void 0:t.type);C=e,L=e.currentTarget,ue(),!$.state.isVisible&&m(e)&&H.forEach((function(t){return t(e)})),"click"===e.type&&($.props.trigger.indexOf("mouseenter")<0||V)&&!1!==$.props.hideOnClick&&$.state.isVisible?n=!0:Le(e),"click"===e.type&&(V=!n),n&&!r&&De(e)}}function we(e){var t=e.target,n=te().contains(t)||z.contains(t);"mousemove"===e.type&&n||function(e,t){var n=t.clientX,r=t.clientY;return e.every((function(e){var t=e.popperRect,o=e.popperState,i=e.props.interactiveBorder,a=p(o.placement),s=o.modifiersData.offset;if(!s)return!0;var u="bottom"===a?s.top.y:0,c="top"===a?s.bottom.y:0,f="right"===a?s.left.x:0,l="left"===a?s.right.x:0,d=t.top-r+u>i,v=r-t.bottom-c>i,m=t.left-n+f>i,g=n-t.right-l>i;return d||v||m||g}))}(Ae().concat(z).map((function(e){var t,n=null==(t=e._tippy.popperInstance)?void 0:t.state;return n?{popperRect:e.getBoundingClientRect(),popperState:n,props:M}:null})).filter(Boolean),e)&&(ce(),De(e))}function Ee(e){xe(e)||$.props.trigger.indexOf("click")>=0&&V||($.props.interactive?$.hideWithInteractivity(e):De(e))}function Oe(e){$.props.trigger.indexOf("focusin")<0&&e.target!==te()||$.props.interactive&&e.relatedTarget&&z.contains(e.relatedTarget)||De(e)}function xe(e){return!!x.isTouch&&Z()!==e.type.indexOf("touch")>=0}function Ce(){Te();var t=$.props,n=t.popperOptions,r=t.placement,i=t.offset,a=t.getReferenceClientRect,s=t.moveTransition,u=ee()?S(z).arrow:null,c=a?{getBoundingClientRect:a,contextElement:a.contextElement||te()}:o,p=[{name:"offset",options:{offset:i}},{name:"preventOverflow",options:{padding:{top:2,bottom:2,left:5,right:5}}},{name:"flip",options:{padding:5}},{name:"computeStyles",options:{adaptive:!s}},{name:"$$tippy",enabled:!0,phase:"beforeWrite",requires:["computeStyles"],fn:function(e){var t=e.state;if(ee()){var n=re().box;["placement","reference-hidden","escaped"].forEach((function(e){"placement"===e?n.setAttribute("data-placement",t.placement):t.attributes.popper["data-popper-"+e]?n.setAttribute("data-"+e,""):n.removeAttribute("data-"+e)})),t.attributes.popper={}}}}];ee()&&u&&p.push({name:"arrow",options:{element:u,padding:3}}),p.push.apply(p,(null==n?void 0:n.modifiers)||[]),$.popperInstance=e.createPopper(c,z,Object.assign({},n,{placement:r,onFirstUpdate:A,modifiers:p}))}function Te(){$.popperInstance&&($.popperInstance.destroy(),$.popperInstance=null)}function Ae(){return f(z.querySelectorAll("[data-tippy-root]"))}function Le(e){$.clearDelayTimeouts(),e&&ae("onTrigger",[$,e]),de();var t=oe(!0),n=Q(),r=n[0],o=n[1];x.isTouch&&"hold"===r&&o&&(t=o),t?v=setTimeout((function(){$.show()}),t):$.show()}function De(e){if($.clearDelayTimeouts(),ae("onUntrigger",[$,e]),$.state.isVisible){if(!($.props.trigger.indexOf("mouseenter")>=0&&$.props.trigger.indexOf("click")>=0&&["mouseleave","mousemove"].indexOf(e.type)>=0&&V)){var t=oe(!1);t?g=setTimeout((function(){$.state.isVisible&&$.hide()}),t):h=requestAnimationFrame((function(){$.hide()}))}}else ve()}}function F(e,n){void 0===n&&(n={});var r=R.plugins.concat(n.plugins||[]);document.addEventListener("touchstart",T,t),window.addEventListener("blur",L);var o=Object.assign({},n,{plugins:r}),i=h(e).reduce((function(e,t){var n=t&&_(t,o);return n&&e.push(n),e}),[]);return v(e)?i[0]:i}F.defaultProps=R,F.setDefaultProps=function(e){Object.keys(e).forEach((function(t){R[t]=e[t]}))},F.currentInput=x;var W=Object.assign({},e.applyStyles,{effect:function(e){var t=e.state,n={popper:{position:t.options.strategy,left:"0",top:"0",margin:"0"},arrow:{position:"absolute"},reference:{}};Object.assign(t.elements.popper.style,n.popper),t.styles=n,t.elements.arrow&&Object.assign(t.elements.arrow.style,n.arrow)}}),X={mouseover:"mouseenter",focusin:"focus",click:"click"};var Y={name:"animateFill",defaultValue:!1,fn:function(e){var t;if(null==(t=e.props.render)||!t.$$tippy)return{};var n=S(e.popper),r=n.box,o=n.content,i=e.props.animateFill?function(){var e=d();return e.className="tippy-backdrop",y([e],"hidden"),e}():null;return{onCreate:function(){i&&(r.insertBefore(i,r.firstElementChild),r.setAttribute("data-animatefill",""),r.style.overflow="hidden",e.setProps({arrow:!1,animation:"shift-away"}))},onMount:function(){if(i){var e=r.style.transitionDuration,t=Number(e.replace("ms",""));o.style.transitionDelay=Math.round(t/10)+"ms",i.style.transitionDuration=e,y([i],"visible")}},onShow:function(){i&&(i.style.transitionDuration="0ms")},onHide:function(){i&&y([i],"hidden")}}}};var $={clientX:0,clientY:0},q=[];function z(e){var t=e.clientX,n=e.clientY;$={clientX:t,clientY:n}}var J={name:"followCursor",defaultValue:!1,fn:function(e){var t=e.reference,n=w(e.props.triggerTarget||t),r=!1,o=!1,i=!0,a=e.props;function s(){return"initial"===e.props.followCursor&&e.state.isVisible}function u(){n.addEventListener("mousemove",f)}function c(){n.removeEventListener("mousemove",f)}function p(){r=!0,e.setProps({getReferenceClientRect:null}),r=!1}function f(n){var r=!n.target||t.contains(n.target),o=e.props.followCursor,i=n.clientX,a=n.clientY,s=t.getBoundingClientRect(),u=i-s.left,c=a-s.top;!r&&e.props.interactive||e.setProps({getReferenceClientRect:function(){var e=t.getBoundingClientRect(),n=i,r=a;"initial"===o&&(n=e.left+u,r=e.top+c);var s="horizontal"===o?e.top:r,p="vertical"===o?e.right:n,f="horizontal"===o?e.bottom:r,l="vertical"===o?e.left:n;return{width:p-l,height:f-s,top:s,right:p,bottom:f,left:l}}})}function l(){e.props.followCursor&&(q.push({instance:e,doc:n}),function(e){e.addEventListener("mousemove",z)}(n))}function d(){0===(q=q.filter((function(t){return t.instance!==e}))).filter((function(e){return e.doc===n})).length&&function(e){e.removeEventListener("mousemove",z)}(n)}return{onCreate:l,onDestroy:d,onBeforeUpdate:function(){a=e.props},onAfterUpdate:function(t,n){var i=n.followCursor;r||void 0!==i&&a.followCursor!==i&&(d(),i?(l(),!e.state.isMounted||o||s()||u()):(c(),p()))},onMount:function(){e.props.followCursor&&!o&&(i&&(f($),i=!1),s()||u())},onTrigger:function(e,t){m(t)&&($={clientX:t.clientX,clientY:t.clientY}),o="focus"===t.type},onHidden:function(){e.props.followCursor&&(p(),c(),i=!0)}}}};var G={name:"inlinePositioning",defaultValue:!1,fn:function(e){var t,n=e.reference;var r=-1,o=!1,i=[],a={name:"tippyInlinePositioning",enabled:!0,phase:"afterWrite",fn:function(o){var a=o.state;e.props.inlinePositioning&&(-1!==i.indexOf(a.placement)&&(i=[]),t!==a.placement&&-1===i.indexOf(a.placement)&&(i.push(a.placement),e.setProps({getReferenceClientRect:function(){return function(e){return function(e,t,n,r){if(n.length<2||null===e)return t;if(2===n.length&&r>=0&&n[0].left>n[1].right)return n[r]||t;switch(e){case"top":case"bottom":var o=n[0],i=n[n.length-1],a="top"===e,s=o.top,u=i.bottom,c=a?o.left:i.left,p=a?o.right:i.right;return{top:s,bottom:u,left:c,right:p,width:p-c,height:u-s};case"left":case"right":var f=Math.min.apply(Math,n.map((function(e){return e.left}))),l=Math.max.apply(Math,n.map((function(e){return e.right}))),d=n.filter((function(t){return"left"===e?t.left===f:t.right===l})),v=d[0].top,m=d[d.length-1].bottom;return{top:v,bottom:m,left:f,right:l,width:l-f,height:m-v};default:return t}}(p(e),n.getBoundingClientRect(),f(n.getClientRects()),r)}(a.placement)}})),t=a.placement)}};function s(){var t;o||(t=function(e,t){var n;return{popperOptions:Object.assign({},e.popperOptions,{modifiers:[].concat(((null==(n=e.popperOptions)?void 0:n.modifiers)||[]).filter((function(e){return e.name!==t.name})),[t])})}}(e.props,a),o=!0,e.setProps(t),o=!1)}return{onCreate:s,onAfterUpdate:s,onTrigger:function(t,n){if(m(n)){var o=f(e.reference.getClientRects()),i=o.find((function(e){return e.left-2<=n.clientX&&e.right+2>=n.clientX&&e.top-2<=n.clientY&&e.bottom+2>=n.clientY})),a=o.indexOf(i);r=a>-1?a:r}},onHidden:function(){r=-1}}}};var K={name:"sticky",defaultValue:!1,fn:function(e){var t=e.reference,n=e.popper;function r(t){return!0===e.props.sticky||e.props.sticky===t}var o=null,i=null;function a(){var s=r("reference")?(e.popperInstance?e.popperInstance.state.elements.reference:t).getBoundingClientRect():null,u=r("popper")?n.getBoundingClientRect():null;(s&&Q(o,s)||u&&Q(i,u))&&e.popperInstance&&e.popperInstance.update(),o=s,i=u,e.state.isMounted&&requestAnimationFrame(a)}return{onMount:function(){e.props.sticky&&a()}}}};function Q(e,t){return!e||!t||(e.top!==t.top||e.right!==t.right||e.bottom!==t.bottom||e.left!==t.left)}return F.setDefaultProps({plugins:[Y,J,G,K],render:N}),F.createSingleton=function(e,t){var n;void 0===t&&(t={});var r,o=e,i=[],a=[],c=t.overrides,p=[],f=!1;function l(){a=o.map((function(e){return u(e.props.triggerTarget||e.reference)})).reduce((function(e,t){return e.concat(t)}),[])}function v(){i=o.map((function(e){return e.reference}))}function m(e){o.forEach((function(t){e?t.enable():t.disable()}))}function g(e){return o.map((function(t){var n=t.setProps;return t.setProps=function(o){n(o),t.reference===r&&e.setProps(o)},function(){t.setProps=n}}))}function h(e,t){var n=a.indexOf(t);if(t!==r){r=t;var s=(c||[]).concat("content").reduce((function(e,t){return e[t]=o[n].props[t],e}),{});e.setProps(Object.assign({},s,{getReferenceClientRect:"function"==typeof s.getReferenceClientRect?s.getReferenceClientRect:function(){var e;return null==(e=i[n])?void 0:e.getBoundingClientRect()}}))}}m(!1),v(),l();var b={fn:function(){return{onDestroy:function(){m(!0)},onHidden:function(){r=null},onClickOutside:function(e){e.props.showOnCreate&&!f&&(f=!0,r=null)},onShow:function(e){e.props.showOnCreate&&!f&&(f=!0,h(e,i[0]))},onTrigger:function(e,t){h(e,t.currentTarget)}}}},y=F(d(),Object.assign({},s(t,["overrides"]),{plugins:[b].concat(t.plugins||[]),triggerTarget:a,popperOptions:Object.assign({},t.popperOptions,{modifiers:[].concat((null==(n=t.popperOptions)?void 0:n.modifiers)||[],[W])})})),w=y.show;y.show=function(e){if(w(),!r&&null==e)return h(y,i[0]);if(!r||null!=e){if("number"==typeof e)return i[e]&&h(y,i[e]);if(o.indexOf(e)>=0){var t=e.reference;return h(y,t)}return i.indexOf(e)>=0?h(y,e):void 0}},y.showNext=function(){var e=i[0];if(!r)return y.show(0);var t=i.indexOf(r);y.show(i[t+1]||e)},y.showPrevious=function(){var e=i[i.length-1];if(!r)return y.show(e);var t=i.indexOf(r),n=i[t-1]||e;y.show(n)};var E=y.setProps;return y.setProps=function(e){c=e.overrides||c,E(e)},y.setInstances=function(e){m(!0),p.forEach((function(e){return e()})),o=e,m(!1),v(),l(),p=g(y),y.setProps({triggerTarget:a})},p=g(y),y},F.delegate=function(e,n){var r=[],o=[],i=!1,a=n.target,c=s(n,["target"]),p=Object.assign({},c,{trigger:"manual",touch:!1}),f=Object.assign({touch:R.touch},c,{showOnCreate:!0}),l=F(e,p);function d(e){if(e.target&&!i){var t=e.target.closest(a);if(t){var r=t.getAttribute("data-tippy-trigger")||n.trigger||R.trigger;if(!t._tippy&&!("touchstart"===e.type&&"boolean"==typeof f.touch||"touchstart"!==e.type&&r.indexOf(X[e.type])<0)){var s=F(t,f);s&&(o=o.concat(s))}}}}function v(e,t,n,o){void 0===o&&(o=!1),e.addEventListener(t,n,o),r.push({node:e,eventType:t,handler:n,options:o})}return u(l).forEach((function(e){var n=e.destroy,a=e.enable,s=e.disable;e.destroy=function(e){void 0===e&&(e=!0),e&&o.forEach((function(e){e.destroy()})),o=[],r.forEach((function(e){var t=e.node,n=e.eventType,r=e.handler,o=e.options;t.removeEventListener(n,r,o)})),r=[],n()},e.enable=function(){a(),o.forEach((function(e){return e.enable()})),i=!1},e.disable=function(){s(),o.forEach((function(e){return e.disable()})),i=!0},function(e){var n=e.reference;v(n,"touchstart",d,t),v(n,"mouseover",d),v(n,"focusin",d),v(n,"click",d)}(e)})),l},F.hideAll=function(e){var t=void 0===e?{}:e,n=t.exclude,r=t.duration;U.forEach((function(e){var t=!1;if(n&&(t=g(n)?e.reference===n:e.popper===n.popper),!t){var o=e.props.duration;e.setProps({duration:r}),e.hide(),e.state.isDestroyed||e.setProps({duration:o})}}))},F.roundArrow='<svg width="16" height="6" xmlns="http://www.w3.org/2000/svg"><path d="M0 6s1.796-.013 4.67-3.615C5.851.9 6.93.006 8 0c1.07-.006 2.148.887 3.343 2.385C14.233 6.005 16 6 16 6H0z"></svg>',F}));
 
-
+</script>
+<style type="text/css">.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}.tippy-box{position:relative;background-color:#333;color:#fff;border-radius:4px;font-size:14px;line-height:1.4;white-space:normal;outline:0;transition-property:transform,visibility,opacity}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:0}.tippy-box[data-placement^=top]>.tippy-arrow:before{bottom:-7px;left:0;border-width:8px 8px 0;border-top-color:initial;transform-origin:center top}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:0}.tippy-box[data-placement^=bottom]>.tippy-arrow:before{top:-7px;left:0;border-width:0 8px 8px;border-bottom-color:initial;transform-origin:center bottom}.tippy-box[data-placement^=left]>.tippy-arrow{right:0}.tippy-box[data-placement^=left]>.tippy-arrow:before{border-width:8px 0 8px 8px;border-left-color:initial;right:-7px;transform-origin:center left}.tippy-box[data-placement^=right]>.tippy-arrow{left:0}.tippy-box[data-placement^=right]>.tippy-arrow:before{left:-7px;border-width:8px 8px 8px 0;border-right-color:initial;transform-origin:center right}.tippy-box[data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}.tippy-arrow{width:16px;height:16px;color:#333}.tippy-arrow:before{content:"";position:absolute;border-color:transparent;border-style:solid}.tippy-content{position:relative;padding:5px 9px;z-index:1}</style>
+<style type="text/css">.tippy-box[data-theme~=light-border]{background-color:#fff;background-clip:padding-box;border:1px solid rgba(0,8,16,.15);color:#333;box-shadow:0 4px 14px -2px rgba(0,8,16,.08)}.tippy-box[data-theme~=light-border]>.tippy-backdrop{background-color:#fff}.tippy-box[data-theme~=light-border]>.tippy-arrow:after,.tippy-box[data-theme~=light-border]>.tippy-svg-arrow:after{content:"";position:absolute;z-index:-1}.tippy-box[data-theme~=light-border]>.tippy-arrow:after{border-color:transparent;border-style:solid}.tippy-box[data-theme~=light-border][data-placement^=top]>.tippy-arrow:before{border-top-color:#fff}.tippy-box[data-theme~=light-border][data-placement^=top]>.tippy-arrow:after{border-top-color:rgba(0,8,16,.2);border-width:7px 7px 0;top:17px;left:1px}.tippy-box[data-theme~=light-border][data-placement^=top]>.tippy-svg-arrow>svg{top:16px}.tippy-box[data-theme~=light-border][data-placement^=top]>.tippy-svg-arrow:after{top:17px}.tippy-box[data-theme~=light-border][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:#fff;bottom:16px}.tippy-box[data-theme~=light-border][data-placement^=bottom]>.tippy-arrow:after{border-bottom-color:rgba(0,8,16,.2);border-width:0 7px 7px;bottom:17px;left:1px}.tippy-box[data-theme~=light-border][data-placement^=bottom]>.tippy-svg-arrow>svg{bottom:16px}.tippy-box[data-theme~=light-border][data-placement^=bottom]>.tippy-svg-arrow:after{bottom:17px}.tippy-box[data-theme~=light-border][data-placement^=left]>.tippy-arrow:before{border-left-color:#fff}.tippy-box[data-theme~=light-border][data-placement^=left]>.tippy-arrow:after{border-left-color:rgba(0,8,16,.2);border-width:7px 0 7px 7px;left:17px;top:1px}.tippy-box[data-theme~=light-border][data-placement^=left]>.tippy-svg-arrow>svg{left:11px}.tippy-box[data-theme~=light-border][data-placement^=left]>.tippy-svg-arrow:after{left:12px}.tippy-box[data-theme~=light-border][data-placement^=right]>.tippy-arrow:before{border-right-color:#fff;right:16px}.tippy-box[data-theme~=light-border][data-placement^=right]>.tippy-arrow:after{border-width:7px 7px 7px 0;right:17px;top:1px;border-right-color:rgba(0,8,16,.2)}.tippy-box[data-theme~=light-border][data-placement^=right]>.tippy-svg-arrow>svg{right:11px}.tippy-box[data-theme~=light-border][data-placement^=right]>.tippy-svg-arrow:after{right:12px}.tippy-box[data-theme~=light-border]>.tippy-svg-arrow{fill:#fff}.tippy-box[data-theme~=light-border]>.tippy-svg-arrow:after{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCA2czEuNzk2LS4wMTMgNC42Ny0zLjYxNUM1Ljg1MS45IDYuOTMuMDA2IDggMGMxLjA3LS4wMDYgMi4xNDguODg3IDMuMzQzIDIuMzg1QzE0LjIzMyA2LjAwNSAxNiA2IDE2IDZIMHoiIGZpbGw9InJnYmEoMCwgOCwgMTYsIDAuMikiLz48L3N2Zz4=);background-size:16px 6px;width:16px;height:6px}</style>
 
 
 <style type="text/css">body {
@@ -156,34 +83,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#TOC {
-clear: both;
-margin: 0 0 10px 10px;
-padding: 4px;
-width: 400px;
-border: 1px solid #CCCCCC;
-border-radius: 5px;
-background-color: #f6f6f6;
-font-size: 13px;
-line-height: 1.3;
-}
-#TOC .toctitle {
-font-weight: bold;
-font-size: 15px;
-margin-left: 5px;
-}
-#TOC ul {
-padding-left: 40px;
-margin-left: -1.5em;
-margin-top: 5px;
-margin-bottom: 5px;
-}
-#TOC ul ul {
-margin-left: -2em;
-}
-#TOC li {
-line-height: 16px;
 }
 table {
 margin: 1em auto;
@@ -313,273 +212,440 @@ a[href^="http:"] {
 text-decoration: underline; }
 a[href^="https:"] {
 text-decoration: underline; }
-
-code > span.kw { color: #555; font-weight: bold; } 
-code > span.dt { color: #902000; } 
-code > span.dv { color: #40a070; } 
-code > span.bn { color: #d14; } 
-code > span.fl { color: #d14; } 
-code > span.ch { color: #d14; } 
-code > span.st { color: #d14; } 
-code > span.co { color: #888888; font-style: italic; } 
-code > span.ot { color: #007020; } 
-code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; } 
-code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
-
-
-
-
 </head>
 
 <body>
 
 
+<header id="title-block-header">
+<h1 class="title">Areal Interpolation</h1>
+
+<p class="date">2026-03-30</p>
+</header>
 
 
-<h1 class="title toc-ignore">Areal Interpolation</h1>
-<h4 class="date">2026-01-10</h4>
-
-
-
-<p>This vignette demonstrates how to use
-<code>ddbs_interpolate_aw()</code> to perform areal-weighted
-interpolation. This technique is essential when you need to transfer
-attributes from one set of polygons (source) to another incongruent set
-of polygons (target) based on their area of overlap.</p>
-<p><code>ddbs_interpolate_aw()</code> can be 9-30x faster than
-<code>sf::st_interpolate_aw</code> or <a href="https://chris-prener.github.io/areal/reference/aw_interpolate.html"><code>areal::aw_interpolate</code></a>
-(see benchmarks in <a href="https://www.ekotov.pro/ducksf/" target="_blank"><code>{ducksf}</code></a> where prototype of
-<code>ddbs_interpolate_aw()</code> was originally developed).</p>
-<p><code>duckspatial</code> handles these heavy geometric calculations
-efficiently using DuckDB. We will cover three scenarios:</p>
-<ol style="list-style-type: decimal">
-<li><strong>Extensive vs. Intensive</strong>: Understanding the
-difference between mass-preserving counts and densities.</li>
-<li><strong>Fast Output</strong>: Returning a <code>tibble</code> (no
-geometry) for maximum speed.</li>
-<li><strong>Database Mode</strong>: Performing operations on persistent
-database tables.</li>
+<p>This vignette demonstrates how to use <code>ddbs_interpolate_aw()</code> to perform areal-weighted interpolation. This technique is essential when you need to transfer attributes from one set of polygons (source) to another incongruent set of polygons (target) based on their area of overlap.</p>
+<p><code>ddbs_interpolate_aw()</code> can be 9-30x faster than <code>sf::st_interpolate_aw</code> or <a href="https://chris-prener.github.io/areal/reference/aw_interpolate.html"><code>areal::aw_interpolate</code></a> (see benchmarks in <a href="https://www.ekotov.pro/ducksf/" target="_blank"><code>{ducksf}</code></a> where prototype of <code>ddbs_interpolate_aw()</code> was originally developed).</p>
+<p><code>duckspatial</code> handles these heavy geometric calculations efficiently using DuckDB. We will cover three scenarios:</p>
+<ol type="1">
+<li><strong>Extensive vs. Intensive</strong>: Understanding the difference between mass-preserving counts and densities.</li>
+<li><strong>Fast Output</strong>: Returning a <code>tibble</code> (no geometry) for maximum speed.</li>
+<li><strong>Database Mode</strong>: Performing operations on persistent database tables.</li>
 </ol>
-<div id="setup-data" class="section level3">
-<h3>Setup Data</h3>
-<p>We will use the North Carolina dataset from the <code>sf</code>
-package as our <strong>source</strong>, and create a generic grid as our
-<strong>target</strong>.</p>
-<p><em>Note: We project the data to Albers Equal Area (EPSG:5070)
-because accurate interpolation requires an equal-area
-projection.</em></p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(duckspatial)</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># 1. Load Source Data (NC Counties)</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>nc <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="fu">system.file</span>(<span class="st">&quot;shape/nc.shp&quot;</span>, <span class="at">package =</span> <span class="st">&quot;sf&quot;</span>), <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co"># 2. Transform to projected CRS (Albers) for accurate area calculations</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>nc <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(nc, <span class="dv">5070</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co"># 3. Create a Target Grid</span></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">st_make_grid</span>(nc, <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">5</span>)) <span class="sc">|&gt;</span> <span class="fu">st_as_sf</span>()</span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co"># 4. Create Unique IDs (Required for interpolation)</span></span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>nc<span class="sc">$</span>source_id <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(nc)</span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>grid<span class="sc">$</span>target_id <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(grid)</span></code></pre></div>
+<h3 id="setup-data">Setup Data</h3>
+<p>We will use the North Carolina dataset from the <code>sf</code> package as our <strong>source</strong>, and create a generic grid as our <strong>target</strong>.</p>
+<p><em>Note: We project the data to Albers Equal Area (EPSG:5070) because accurate interpolation requires an equal-area projection.</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckspatial)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Load Source Data (NC Counties)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>nc <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="fu">system.file</span>(<span class="st">&quot;shape/nc.shp&quot;</span>, <span class="at">package =</span> <span class="st">&quot;sf&quot;</span>), <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Transform to projected CRS (Albers) for accurate area calculations</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>nc <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(nc, <span class="dv">5070</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Create a Target Grid</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">st_make_grid</span>(nc, <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">5</span>)) <span class="sc">|&gt;</span> <span class="fu">st_as_sf</span>()</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Create Unique IDs (Required for interpolation)</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>nc<span class="sc">$</span>source_id <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(nc)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>grid<span class="sc">$</span>target_id <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(grid)</span></code></pre></div>
 </div>
-<div id="extensive-vs.-intensive-interpolation" class="section level2">
-<h2>1) Extensive vs. Intensive Interpolation</h2>
-<p>Areal interpolation works differently depending on the nature of the
-data.</p>
-<div id="case-a-extensive-variables-counts" class="section level3">
-<h3>Case A: Extensive Variables (Counts)</h3>
-<p>Variables like population counts or total births (<code>BIR74</code>)
-are <strong>spatially extensive</strong>. If a source polygon is split
-in half, the count should also be split in half. We use
-<code>weight = &quot;total&quot;</code> to ensure strict mass preservation
-relative to the source.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Interpolate Total Births (Extensive)</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>res_extensive <span class="ot">&lt;-</span> <span class="fu">ddbs_interpolate_aw</span>(</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">target =</span> grid,</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">source =</span> nc,</span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="at">extensive =</span> <span class="st">&quot;BIR74&quot;</span>,</span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="at">weight =</span> <span class="st">&quot;total&quot;</span>,</span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>  <span class="at">output =</span> <span class="st">&quot;sf&quot;</span></span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>)</span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; ✔ Query successful</span></span></code></pre></div>
-<p><strong>Verification:</strong> The total sum of births in the result
-should match the original data (mass preservation).</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>orig_sum <span class="ot">&lt;-</span> <span class="fu">sum</span>(nc<span class="sc">$</span>BIR74)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>new_sum  <span class="ot">&lt;-</span> <span class="fu">sum</span>(res_extensive<span class="sc">$</span>BIR74, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="fu">sprintf</span>(<span class="st">&quot;Original: %s | Interpolated: %s&quot;</span>, orig_sum, <span class="fu">round</span>(new_sum, <span class="dv">1</span>))</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Original: 329962 | Interpolated: 329962&quot;</span></span></code></pre></div>
+<h2 id="extensive-vs.-intensive-interpolation">1) Extensive vs. Intensive Interpolation</h2>
+<p>Areal interpolation works differently depending on the nature of the data.</p>
+<h3 id="case-a-extensive-variables-counts">Case A: Extensive Variables (Counts)</h3>
+<p>Variables like population counts or total births (<code>BIR74</code>) are <strong>spatially extensive</strong>. If a source polygon is split in half, the count should also be split in half. We use <code>weight = &quot;total&quot;</code> to ensure strict mass preservation relative to the source.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Interpolate Total Births (Extensive)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>res_extensive <span class="ot">&lt;-</span> <span class="fu">ddbs_interpolate_aw</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">target =</span> grid,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">source =</span> nc,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">extensive =</span> <span class="st">&quot;BIR74&quot;</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">weight =</span> <span class="st">&quot;total&quot;</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;sf&quot;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 </div>
-<div id="case-b-intensive-variables-densitiesratios" class="section level3">
-<h3>Case B: Intensive Variables (Densities/Ratios)</h3>
-<p>Variables like population density or infection rates are
-<strong>spatially intensive</strong>. If a source polygon is split, the
-density remains the same in both pieces. <code>duckspatial</code>
-handles this by calculating the area-weighted average.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Interpolate &#39;BIR74&#39; treating it as an intensive variable (e.g. density assumption)</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>res_intensive <span class="ot">&lt;-</span> <span class="fu">ddbs_interpolate_aw</span>(</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">target =</span> grid,</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="at">source =</span> nc,</span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="at">intensive =</span> <span class="st">&quot;BIR74&quot;</span>, <span class="co"># Treated as density here</span></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="at">weight =</span> <span class="st">&quot;sum&quot;</span>,      <span class="co"># Standard behavior for intensive vars</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  <span class="at">output =</span> <span class="st">&quot;sf&quot;</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>)</span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; ✔ Query successful</span></span></code></pre></div>
+<p><strong>Verification:</strong> The total sum of births in the result should match the original data (mass preservation).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>orig_sum <span class="ot">&lt;-</span> <span class="fu">sum</span>(nc<span class="sc">$</span>BIR74)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>new_sum  <span class="ot">&lt;-</span> <span class="fu">sum</span>(res_extensive<span class="sc">$</span>BIR74, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sprintf</span>(<span class="st">&quot;Original: %s | Interpolated: %s&quot;</span>, orig_sum, <span class="fu">round</span>(new_sum, <span class="dv">1</span>))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Original: 329962 | Interpolated: 329962&quot;</span></span></code></pre></div>
 </div>
-<div id="visual-comparison" class="section level3">
-<h3>Visual Comparison</h3>
-<p>Notice the difference in patterns. Extensive interpolation
-accumulates values based on how much “stuff” falls into a grid cell,
-while intensive interpolation smoothes the values based on overlap.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Combine for plotting</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> res_extensive[, <span class="st">&quot;BIR74&quot;</span>]</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">names</span>(plot_data)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="st">&quot;Extensive_Count&quot;</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>plot_data<span class="sc">$</span>Intensive_Value <span class="ot">&lt;-</span> res_intensive<span class="sc">$</span>BIR74</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="fu">plot</span>(plot_data[<span class="fu">c</span>(<span class="st">&quot;Extensive_Count&quot;</span>, <span class="st">&quot;Intensive_Value&quot;</span>)], </span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Interpolation Methods Comparison&quot;</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">&quot;grey90&quot;</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>     <span class="at">key.pos =</span> <span class="dv">4</span>)</span></code></pre></div>
-<p><img role="img" src="data:image/png;base64,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" width="100%" /></p>
+<h3 id="case-b-intensive-variables-densitiesratios">Case B: Intensive Variables (Densities/Ratios)</h3>
+<p>Variables like population density or infection rates are <strong>spatially intensive</strong>. If a source polygon is split, the density remains the same in both pieces. <code>duckspatial</code> handles this by calculating the area-weighted average.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Interpolate &#39;BIR74&#39; treating it as an intensive variable (e.g. density assumption)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>res_intensive <span class="ot">&lt;-</span> <span class="fu">ddbs_interpolate_aw</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">target =</span> grid,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">source =</span> nc,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">intensive =</span> <span class="st">&quot;BIR74&quot;</span>, <span class="co"># Treated as density here</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">weight =</span> <span class="st">&quot;sum&quot;</span>,      <span class="co"># Standard behavior for intensive vars</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;sf&quot;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<h3 id="visual-comparison">Visual Comparison</h3>
+<p>Notice the difference in patterns. Extensive interpolation accumulates values based on how much “stuff” falls into a grid cell, while intensive interpolation smoothes the values based on overlap.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine for plotting</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> res_extensive[, <span class="st">&quot;BIR74&quot;</span>]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(plot_data)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="st">&quot;Extensive_Count&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>plot_data<span class="sc">$</span>Intensive_Value <span class="ot">&lt;-</span> res_intensive<span class="sc">$</span>BIR74</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(plot_data[<span class="fu">c</span>(<span class="st">&quot;Extensive_Count&quot;</span>, <span class="st">&quot;Intensive_Value&quot;</span>)], </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Interpolation Methods Comparison&quot;</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">&quot;grey90&quot;</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">key.pos =</span> <span class="dv">4</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img role="img" src="data:image/png;base64,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Zzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq8vgAIUoADNZzv1Jq+vmgCVFNrUm7y+ACopN/Umr6+aAA16Ch8zNegaVDS2tqevMVMjrmxd66DtAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpAApQgC4AGji26QAKUIAuABo4tukAClCALgAaOLbpagJUUmhTb/L6Aqik3NSbvL7qAVSSvmcBVJIGBlBJGhhAJWlgAJWkgQFUkgYGUEkaGEAlaWAAlaSBAVSSBgZQSRoYQCVpYACVpIEBVJIGBlBJGhhAJWlgAJWkgQFUkgYGUEkaGEAlaWAAlaSBAVSSBgZQSRoYQCVpYACVpIEBVJIGBlBJGhhAJWlgAJWkgQFUkgYGUEkaGEAlaWAAlaSBAVSSBgZQSRoYQCVpYACVpIEBVJIGBlBJGhhAJWlgAJWkgQFUkgYGUEkaGEAlaWAAlaSBAVSSBgZQSRrY/wcUzk6TRD0+zAAAAABJRU5ErkJggg==" style="width:100.0%"></p>
+</figure>
 </div>
 </div>
-<div id="high-performance-output-as-tibble" class="section level2">
-<h2>2) High Performance: Output as Tibble</h2>
-<p>If you are working with massive datasets, constructing the geometry
-for the result <code>sf</code> object can be slow. If you only need the
-interpolated numbers, set <code>output = &quot;tibble&quot;</code>. This skips the
-geometry construction step and is significantly faster.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Return a standard data.frame/tibble without geometry</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>res_tbl <span class="ot">&lt;-</span> <span class="fu">ddbs_interpolate_aw</span>(</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="at">target =</span> grid,</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="at">source =</span> nc,</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="at">extensive =</span> <span class="st">&quot;BIR74&quot;</span>,</span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="at">output =</span> <span class="st">&quot;tibble&quot;</span></span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>)</span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; ✔ Query successful</span></span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="fu">head</span>(res_tbl)</span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 3</span></span>
-<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt;   target_id crs_duckspatial BIR74</span></span>
-<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt;       &lt;int&gt; &lt;chr&gt;           &lt;dbl&gt;</span></span>
-<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; 1         1 EPSG:5070       1168.</span></span>
-<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt; 2         2 EPSG:5070        379.</span></span>
-<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#&gt; 3         6 EPSG:5070        753.</span></span>
-<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#&gt; 4         7 EPSG:5070       5731.</span></span>
-<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co">#&gt; 5         8 EPSG:5070       8000.</span></span>
-<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co">#&gt; 6        11 EPSG:5070       1417.</span></span></code></pre></div>
 </div>
-<div id="database-mode-large-data-workflows" class="section level2">
-<h2>3) Database Mode: Large Data Workflows</h2>
-<p>For datasets larger than memory, or for persistent pipelines, you can
-perform the interpolation directly inside the DuckDB database without
-pulling data into R until the end.</p>
-<p>First, let’s establish a connection and load our spatial layers into
-tables.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Create connection</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>conn <span class="ot">&lt;-</span> <span class="fu">ddbs_create_conn</span>()</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co"># Write layers to DuckDB</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="fu">ddbs_write_vector</span>(conn, nc, <span class="st">&quot;nc_table&quot;</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; ℹ Table &lt;nc_table&gt; dropped</span></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; ✔ Table nc_table successfully imported</span></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="fu">ddbs_write_vector</span>(conn, grid, <span class="st">&quot;grid_table&quot;</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; ℹ Table &lt;grid_table&gt; dropped</span></span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; ✔ Table grid_table successfully imported</span></span></code></pre></div>
-<p>Now we run the interpolation by referencing the table names. We can
-also use the <code>name</code> argument to save the result directly to a
-new table instead of returning it to R.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Run interpolation and save to new table &#39;nc_grid_births&#39;</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">ddbs_interpolate_aw</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">conn =</span> conn,</span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">target =</span> <span class="st">&quot;grid_table&quot;</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="at">source =</span> <span class="st">&quot;nc_table&quot;</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  <span class="at">extensive =</span> <span class="st">&quot;BIR74&quot;</span>,</span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>  <span class="at">weight =</span> <span class="st">&quot;total&quot;</span>,</span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;nc_grid_births&quot;</span>, <span class="co"># &lt;--- Writes to DB</span></span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>)</span>
-<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt; ℹ Table &lt;nc_grid_births&gt; dropped</span></span>
-<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt; ✔ Query successful</span></span>
-<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a></span>
-<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co"># Verify the table was created</span></span>
-<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbListTables</span>(conn)</span>
-<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; [1] &quot;grid_table&quot;     &quot;nc_grid_births&quot; &quot;nc_table&quot;</span></span></code></pre></div>
+<h2 id="high-performance-output-as-tibble">2) High Performance: Output as Tibble</h2>
+<p>If you are working with massive datasets, constructing the geometry for the result <code>sf</code> object can be slow. If you only need the interpolated numbers, collect the default <code>duckspatial_df</code> using <code>ddbs_collect(as = &quot;tibble&quot;)</code>. This skips the geometry construction step and is significantly faster.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Return a standard data.frame/tibble without geometry</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>res_tbl <span class="ot">&lt;-</span> <span class="fu">ddbs_interpolate_aw</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">target =</span> grid,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">source =</span> nc,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">extensive =</span> <span class="st">&quot;BIR74&quot;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ddbs_collect</span>(<span class="at">as =</span> <span class="st">&quot;tibble&quot;</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(res_tbl)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 2</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   target_id BIR74</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       &lt;int&gt; &lt;dbl&gt;</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         1 1168.</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         2  379.</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         6  753.</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         7 5731.</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5         8 8000.</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6        11 1417.</span></span></code></pre></div>
+</div>
+<h2 id="database-mode-large-data-workflows">3) Database Mode: Large Data Workflows</h2>
+<p>For datasets larger than memory, or for persistent pipelines, you can perform the interpolation directly inside the DuckDB database without pulling data into R until the end.</p>
+<p>First, let’s establish a connection and load our spatial layers into tables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create connection</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>conn <span class="ot">&lt;-</span> <span class="fu">ddbs_create_conn</span>()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Write layers to DuckDB</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_write_vector</span>(conn, nc, <span class="st">&quot;nc_table&quot;</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: `ddbs_write_vector()` was deprecated in duckspatial 1.0.0.</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Please use `ddbs_write_table()` instead.</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Table &lt;nc_table&gt; dropped</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ Table nc_table successfully imported</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_write_vector</span>(conn, grid, <span class="st">&quot;grid_table&quot;</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Table &lt;grid_table&gt; dropped</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ Table grid_table successfully imported</span></span></code></pre></div>
+</div>
+<p>Now we run the interpolation by referencing the table names. We can also use the <code>name</code> argument to save the result directly to a new table instead of returning it to R.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run interpolation and save to new table &#39;nc_grid_births&#39;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_interpolate_aw</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">conn =</span> conn,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">target =</span> <span class="st">&quot;grid_table&quot;</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">source =</span> <span class="st">&quot;nc_table&quot;</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">extensive =</span> <span class="st">&quot;BIR74&quot;</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">weight =</span> <span class="st">&quot;total&quot;</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;nc_grid_births&quot;</span>, <span class="co"># &lt;--- Writes to DB</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Table &lt;nc_grid_births&gt; dropped</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ Query successful</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify the table was created</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbListTables</span>(conn)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;grid_table&quot;     &quot;nc_grid_births&quot; &quot;nc_table&quot;</span></span></code></pre></div>
+</div>
 <p>We can now query this table or read it back later.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Read the result back from the database</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>final_sf <span class="ot">&lt;-</span> <span class="fu">ddbs_read_vector</span>(conn, <span class="st">&quot;nc_grid_births&quot;</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; ✔ table nc_grid_births successfully imported.</span></span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="fu">head</span>(final_sf)</span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 6 features and 2 fields</span></span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; Geometry type: POLYGON</span></span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; Dimension:     XY</span></span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; Bounding box:  xmin: 1054293 ymin: 1348021 xmax: 1677656 ymax: 1484503</span></span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; Projected CRS: NAD83 / Conus Albers</span></span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt;   target_id     BIR74                              x</span></span>
-<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; 1         1 1168.3093 POLYGON ((1054293 1348021, ...</span></span>
-<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; 2         2  378.5281 POLYGON ((1132214 1348021, ...</span></span>
-<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; 3         6  752.9156 POLYGON ((1443895 1348021, ...</span></span>
-<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt; 4         7 5731.0103 POLYGON ((1521815 1348021, ...</span></span>
-<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#&gt; 5         8 7999.6957 POLYGON ((1599735 1348021, ...</span></span>
-<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#&gt; 6        11 1416.5579 POLYGON ((1054293 1416262, ...</span></span></code></pre></div>
-<p>If we only wanted the database table, without the geometry, we could
-do:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">ddbs_interpolate_aw</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="at">conn =</span> conn,</span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="at">target =</span> <span class="st">&quot;grid_table&quot;</span>,</span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="at">source =</span> <span class="st">&quot;nc_table&quot;</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>  <span class="at">extensive =</span> <span class="st">&quot;BIR74&quot;</span>,</span>
-<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>  <span class="at">weight =</span> <span class="st">&quot;total&quot;</span>,</span>
-<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;nc_grid_births&quot;</span>, <span class="co"># &lt;--- Writes to DB</span></span>
-<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a>  <span class="at">output =</span> <span class="st">&quot;tibble&quot;</span></span>
-<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>)</span>
-<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#&gt; ℹ Table &lt;nc_grid_births&gt; dropped</span></span>
-<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt; ✔ Query successful</span></span></code></pre></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the result back from the database</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>final_sf <span class="ot">&lt;-</span> <span class="fu">ddbs_read_vector</span>(conn, <span class="st">&quot;nc_grid_births&quot;</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: `ddbs_read_vector()` was deprecated in duckspatial 1.0.0.</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Please use `ddbs_read_table()` instead.</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ table nc_grid_births successfully imported.</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(final_sf)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 6 features and 2 fields</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Geometry type: POLYGON</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Dimension:     XY</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Bounding box:  xmin: 1054293 ymin: 1348021 xmax: 1677656 ymax: 1484503</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Projected CRS: NAD83 / Conus Albers</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   target_id     BIR74                              x</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         1 1168.3093 POLYGON ((1054293 1348021, ...</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         2  378.5281 POLYGON ((1132214 1348021, ...</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         6  752.9156 POLYGON ((1443895 1348021, ...</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         7 5731.0103 POLYGON ((1521815 1348021, ...</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5         8 7999.6957 POLYGON ((1599735 1348021, ...</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6        11 1416.5579 POLYGON ((1054293 1416262, ...</span></span></code></pre></div>
+</div>
+<p>If we only wanted the database table, without the geometry, we could do:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_interpolate_aw</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">conn =</span> conn,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">target =</span> <span class="st">&quot;grid_table&quot;</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">source =</span> <span class="st">&quot;nc_table&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">tid =</span> <span class="st">&quot;target_id&quot;</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sid =</span> <span class="st">&quot;source_id&quot;</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">extensive =</span> <span class="st">&quot;BIR74&quot;</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">weight =</span> <span class="st">&quot;total&quot;</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;nc_grid_births&quot;</span>, <span class="co"># &lt;--- Writes to DB</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;tibble&quot;</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Table &lt;nc_grid_births&gt; dropped</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ Query successful</span></span></code></pre></div>
+</div>
 <p>And preview this table directly in the database:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbGetQuery</span>(conn, <span class="st">&quot;SELECT * FROM nc_grid_births LIMIT 5&quot;</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co">#&gt;   target_id crs_duckspatial     BIR74</span></span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt; 1         1       EPSG:5070 1168.3093</span></span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt; 2         2       EPSG:5070  378.5281</span></span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co">#&gt; 3         6       EPSG:5070  752.9156</span></span>
-<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt; 4         7       EPSG:5070 5731.0103</span></span>
-<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt; 5         8       EPSG:5070 7999.6957</span></span></code></pre></div>
-<div id="cleanup" class="section level3">
-<h3>Cleanup</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as_duckspatial_df</span>(<span class="st">&quot;nc_grid_births&quot;</span>, conn)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A duckspatial lazy spatial table</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● CRS: EPSG:5070 </span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Geometry column: x </span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Geometry type: POLYGON </span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Bounding box: xmin: 1.0543e+06 ymin: 1.348e+06 xmax: 1.8335e+06 ymax: 1.6892e+06 </span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Data backed by DuckDB (dbplyr lazy evaluation)</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Use ddbs_collect() or st_as_sf() to materialize to sf</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;nc_grid_births&gt; [?? x 3]</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB 1.5.1 [Cidre@Windows 10 x64:R 4.5.2/:memory:]</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    target_id x                                                             BIR74</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        &lt;int&gt; &lt;wk_wkb&gt;                                                      &lt;dbl&gt;</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1         1 &lt;POLYGON ((1054293 1348021, 1132214 1348021, 1132214 141626…  1168.</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2         2 &lt;POLYGON ((1132214 1348021, 1210134 1348021, 1210134 141626…   379.</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3         6 &lt;POLYGON ((1443895 1348021, 1521815 1348021, 1521815 141626…   753.</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4         7 &lt;POLYGON ((1521815 1348021, 1599735 1348021, 1599735 141626…  5731.</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5         8 &lt;POLYGON ((1599735 1348021, 1677656 1348021, 1677656 141626…  8000.</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6        11 &lt;POLYGON ((1054293 1416262, 1132214 1416262, 1132214 148450…  1417.</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7        12 &lt;POLYGON ((1132214 1416262, 1210134 1416262, 1210134 148450…  8314.</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8        13 &lt;POLYGON ((1210134 1416262, 1288054 1416262, 1288054 148450…  8305.</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9        14 &lt;POLYGON ((1288054 1416262, 1365975 1416262, 1365975 148450… 25694.</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10        15 &lt;POLYGON ((1365975 1416262, 1443895 1416262, 1443895 148450… 17277.</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
+</div>
+<h3 id="cleanup">Cleanup</h3>
 <p>Always close the connection when finished.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>duckdb<span class="sc">::</span><span class="fu">dbDisconnect</span>(conn)</span></code></pre></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>duckdb<span class="sc">::</span><span class="fu">dbDisconnect</span>(conn)</span></code></pre></div>
 </div>
-</div>
+
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'light-border',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+        for (let i=0; i<annoteTargets.length; i++) {
+          const annoteTarget = annoteTargets[i];
+          const targetCell = annoteTarget.getAttribute("data-target-cell");
+          const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+          const contentFn = () => {
+            const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+            if (content) {
+              const tipContent = content.cloneNode(true);
+              tipContent.classList.add("code-annotation-tip-content");
+              return tipContent.outerHTML;
+            }
+          }
+          const config = {
+            allowHTML: true,
+            content: contentFn,
+            onShow: (instance) => {
+              selectCodeLines(instance.reference);
+              instance.reference.classList.add('code-annotation-active');
+              window.tippy.hideAll();
+            },
+            onHide: (instance) => {
+              unselectCodeLines();
+              instance.reference.classList.remove('code-annotation-active');
+            },
+            maxWidth: 300,
+            delay: [50, 0],
+            duration: [200, 0],
+            offset: [5, 10],
+            arrow: true,
+            appendTo: function(el) {
+              return el.parentElement.parentElement.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'right',
+            popperOptions: {
+              modifiers: [
+              {
+                name: 'flip',
+                options: {
+                  flipVariations: false, // true by default
+                  allowedAutoPlacements: ['right'],
+                  fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+                },
+              },
+              {
+                name: 'preventOverflow',
+                options: {
+                  mainAxis: false,
+                  altAxis: false
+                }
+              }
+              ]        
+            }      
+          };
+          window.tippy(annoteTarget, config); 
+        }
+  });
+  </script>
 
 
 
-<!-- code folding -->
 
-
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
-
-</body>
-</html>
+</body></html>

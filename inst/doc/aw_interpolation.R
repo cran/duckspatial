@@ -1,16 +1,14 @@
-## ----include = FALSE----------------------------------------------------------
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  # eval = identical(tolower(Sys.getenv("NOT_CRAN")), "true"),
-  eval = TRUE,
-  out.width = "100%"
-)
+## -----------------------------------------------------------------------------
+#| include: false
 
 # CRAN OMP THREAD LIMIT to avoid CRAN NOTE
 Sys.setenv(OMP_THREAD_LIMIT = 2)
 
-## ----setup, message=FALSE, warning=FALSE--------------------------------------
+
+## -----------------------------------------------------------------------------
+#| label: setup
+#| message: false
+#| warning: false
 library(duckspatial)
 library(sf)
 
@@ -27,6 +25,7 @@ grid <- st_make_grid(nc, n = c(10, 5)) |> st_as_sf()
 nc$source_id <- 1:nrow(nc)
 grid$target_id <- 1:nrow(grid)
 
+
 ## -----------------------------------------------------------------------------
 # Interpolate Total Births (Extensive)
 res_extensive <- ddbs_interpolate_aw(
@@ -36,14 +35,16 @@ res_extensive <- ddbs_interpolate_aw(
   sid = "source_id",
   extensive = "BIR74",
   weight = "total",
-  output = "sf"
+  mode = "sf"
 )
+
 
 ## -----------------------------------------------------------------------------
 orig_sum <- sum(nc$BIR74)
 new_sum  <- sum(res_extensive$BIR74, na.rm = TRUE)
 
 sprintf("Original: %s | Interpolated: %s", orig_sum, round(new_sum, 1))
+
 
 ## -----------------------------------------------------------------------------
 # Interpolate 'BIR74' treating it as an intensive variable (e.g. density assumption)
@@ -54,8 +55,9 @@ res_intensive <- ddbs_interpolate_aw(
   sid = "source_id",
   intensive = "BIR74", # Treated as density here
   weight = "sum",      # Standard behavior for intensive vars
-  output = "sf"
+  mode = "sf"
 )
+
 
 ## ----fig.height=5, fig.width=7------------------------------------------------
 # Combine for plotting
@@ -68,6 +70,7 @@ plot(plot_data[c("Extensive_Count", "Intensive_Value")],
      border = "grey90",
      key.pos = 4)
 
+
 ## -----------------------------------------------------------------------------
 # Return a standard data.frame/tibble without geometry
 res_tbl <- ddbs_interpolate_aw(
@@ -75,11 +78,12 @@ res_tbl <- ddbs_interpolate_aw(
   source = nc,
   tid = "target_id",
   sid = "source_id",
-  extensive = "BIR74",
-  output = "tibble"
-)
+  extensive = "BIR74"
+) |> 
+  ddbs_collect(as = "tibble")
 
 head(res_tbl)
+
 
 ## -----------------------------------------------------------------------------
 # Create connection
@@ -88,6 +92,7 @@ conn <- ddbs_create_conn()
 # Write layers to DuckDB
 ddbs_write_vector(conn, nc, "nc_table", overwrite = TRUE)
 ddbs_write_vector(conn, grid, "grid_table", overwrite = TRUE)
+
 
 ## -----------------------------------------------------------------------------
 # Run interpolation and save to new table 'nc_grid_births'
@@ -106,11 +111,13 @@ ddbs_interpolate_aw(
 # Verify the table was created
 DBI::dbListTables(conn)
 
+
 ## -----------------------------------------------------------------------------
 # Read the result back from the database
 final_sf <- ddbs_read_vector(conn, "nc_grid_births")
 
 head(final_sf)
+
 
 ## -----------------------------------------------------------------------------
 ddbs_interpolate_aw(
@@ -123,11 +130,13 @@ ddbs_interpolate_aw(
   weight = "total",
   name = "nc_grid_births", # <--- Writes to DB
   overwrite = TRUE,
-  output = "tibble"
+  mode = "tibble"
 )
 
+
 ## -----------------------------------------------------------------------------
-DBI::dbGetQuery(conn, "SELECT * FROM nc_grid_births LIMIT 5")
+as_duckspatial_df("nc_grid_births", conn)
+
 
 ## -----------------------------------------------------------------------------
 duckdb::dbDisconnect(conn)

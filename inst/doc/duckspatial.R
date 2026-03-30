@@ -1,106 +1,132 @@
-## ----include = FALSE----------------------------------------------------------
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  eval = identical(tolower(Sys.getenv("NOT_CRAN")), "true"),
-  out.width = "100%"
-)
+## -----------------------------------------------------------------------------
+#| include: false
 
-# CRAN OMP THREAD LIMIT to avoid CRAN NOTE
+# Limit threads to avoid a CRAN NOTE
 Sys.setenv(OMP_THREAD_LIMIT = 2)
 
-## ----message=FALSE------------------------------------------------------------
+
+## -----------------------------------------------------------------------------
+#| label: setup
+#| message: false
+#| warning: false
+
+library(duckdb)
 library(duckspatial)
+library(dplyr)
 library(sf)
 
-# polygons
-countries_sf  <- sf::st_read(
-    system.file("spatial/countries.geojson",  package = "duckspatial"),
-    quiet = TRUE
-    )
 
-# create random points
-set.seed(42)
-n <- 10000
-points_sf <- data.frame(
-  id = 1:n,
-  x  = runif(n, min = -180, max = 180),
-  y  = runif(n, min =  -90, max =  90)
-) |>
-  sf::st_as_sf(coords = c("x","y"), crs = 4326)
-
-
-## ----message=FALSE------------------------------------------------------------
-result_sf <- ddbs_join(
-  x = points_sf,
-  y = countries_sf,
-  join = "intersects"
+## -----------------------------------------------------------------------------
+countries_ddbs <- ddbs_open_dataset(
+  system.file(
+    "spatial/countries.geojson",
+    package = "duckspatial"
+  )
 )
 
-head(result_sf)
+print(countries_ddbs)
 
-## ----message=FALSE------------------------------------------------------------
-# create duckdb con and install / load spatial extension
-conn <- duckspatial::ddbs_create_conn()
 
-## ----message=FALSE------------------------------------------------------------
-ddbs_join(
-    conn = conn,
-    x = points_sf,
-    y = countries_sf,
-    join = "intersects", 
-    name = "points_in_countries_tbl"
+## -----------------------------------------------------------------------------
+## read with sf as usual
+countries_sf <- read_sf(
+  system.file(
+    "spatial/countries.geojson",
+    package = "duckspatial"
+  )
+)
+
+## push into DuckDB
+countries_ddbs <- as_duckspatial_df(countries_sf)
+
+class(countries_ddbs)
+
+
+## -----------------------------------------------------------------------------
+countries_ddbs |>
+  ddbs_is_valid() |>
+  filter(!is_valid)
+
+
+## -----------------------------------------------------------------------------
+world_ddbs <- countries_ddbs |>
+  ddbs_make_valid() |>
+  ddbs_union()
+
+print(world_ddbs)
+
+
+## -----------------------------------------------------------------------------
+world_sf <- world_ddbs |>
+  ddbs_collect()
+
+print(world_sf)
+
+
+## -----------------------------------------------------------------------------
+plot(world_sf)
+
+
+## -----------------------------------------------------------------------------
+conn <- ddbs_create_conn()
+
+
+## -----------------------------------------------------------------------------
+conn <- ddbs_create_conn(
+  threads         = 2,
+  memory_limit_gb = 8
 )
 
 
-## ----message=FALSE------------------------------------------------------------
-tbl <- ddbs_read_vector(
-    conn = conn,
-    name = "points_in_countries_tbl"
-    )
-
-head(tbl)
+## -----------------------------------------------------------------------------
+ddbs_write_table(conn, countries_sf, name = "countries")
 
 
-## ----message=FALSE------------------------------------------------------------
-# write `sf` objects as tables to duckdb
-duckspatial::ddbs_write_vector(
-    conn = conn, 
-    data = countries_sf, 
-    name = "countries"
-    )
-
-duckspatial::ddbs_write_vector(
-    conn = conn, 
-    data = points_sf, 
-    name = "points"
-    )
+## -----------------------------------------------------------------------------
+ddbs_list_tables(conn)
 
 
-## ----message=FALSE------------------------------------------------------------
-result_sf <- ddbs_join(
-  conn = conn,
-  x = "points",
-  y = "countries",
-  join = "intersects"
-  )
+## -----------------------------------------------------------------------------
+ddbs_is_valid("countries", conn = conn) |>
+  filter(!is_valid)
 
 
-## ----message=FALSE------------------------------------------------------------
-ddbs_join(
-  conn = conn,
-  x = "points",
-  y = "countries",
-  join = "intersects", 
-  name = "points_in_countries_tbl", 
-  overwrite = TRUE
-  )
+## -----------------------------------------------------------------------------
+ddbs_make_valid("countries", conn = conn, name = "countries_valid")
+ddbs_union("countries_valid", conn = conn, name = "world")
 
 
-# and read the table to memory as sf
-# tbl <- ddbs_read_vector(
-#     conn = conn,
-#     name = "points_in_countries_tbl"
-#     )
+## -----------------------------------------------------------------------------
+ddbs_read_table(conn, "world") |>
+  plot()
 
+
+## -----------------------------------------------------------------------------
+ddbs_stop_conn(conn)
+
+
+## -----------------------------------------------------------------------------
+#| eval: false
+
+# conn <- ddbs_create_conn("my_database.duckdb")
+
+
+## -----------------------------------------------------------------------------
+#| eval: false
+
+# ## open persistent connection
+# conn <- ddbs_create_conn("my_database.duckdb")
+# 
+# ## do all processing with duckspatial_df objects
+# world_ddbs <- ddbs_open_dataset(
+#     system.file("spatial/countries.geojson", package = "duckspatial")
+#   ) |>
+#   ddbs_make_valid() |>
+#   ddbs_union()
+# 
+# ## write only the final result to the persistent database
+# ddbs_write_table(conn, world_ddbs, name = "world")
+# 
+# ## close — "my_database.duckdb" will persist on disk
+# ddbs_stop_conn(conn)
 

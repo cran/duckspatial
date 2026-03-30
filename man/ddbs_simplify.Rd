@@ -6,21 +6,32 @@
 \usage{
 ddbs_simplify(
   x,
-  tolerance,
+  tolerance = 0,
+  preserve_topology = FALSE,
   conn = NULL,
   name = NULL,
-  crs = NULL,
-  crs_column = "crs_duckspatial",
+  mode = NULL,
   overwrite = FALSE,
   quiet = FALSE
 )
 }
 \arguments{
-\item{x}{An \code{sf} spatial object. Alternatively, it can be a string with the
-name of a table with geometry column within the DuckDB database \code{conn}.
+\item{x}{Input spatial data. Can be:
+\itemize{
+\item A \code{duckspatial_df} object (lazy spatial data frame via dbplyr)
+\item An \code{sf} object
+\item A \code{tbl_lazy} from dbplyr
+\item A character string naming a table/view in \code{conn}
+}
 Data is returned from this object.}
 
-\item{tolerance}{Tolerance distance for simplification. Larger values result in more simplified geometries.}
+\item{tolerance}{Tolerance distance for simplification. Larger values result in more
+simplified geometries.}
+
+\item{preserve_topology}{If FALSE, uses the Douglas-Peucker algorithm, which reduces
+the vertices by removing points that are within a given distance. If TRUE, uses a
+topology-preserving variant of Douglas-Peucker that guarantees the output geometry
+remains valid (slower).}
 
 \item{conn}{A connection object to a DuckDB database. If \code{NULL}, the function
 runs on a temporary DuckDB database.}
@@ -30,12 +41,13 @@ or a character string of length two specifying the schema and table
 names. If \code{NULL} (the default), the function returns the result as an
 \code{sf} object}
 
-\item{crs}{The coordinates reference system of the data. Specify if the data
-doesn't have a \code{crs_column}, and you know the CRS.}
-
-\item{crs_column}{a character string of length one specifying the column
-storing the CRS (created automatically by \code{\link{ddbs_write_vector}}).
-Set to \code{NULL} if absent.}
+\item{mode}{Character. Controls the return type. Options:
+\itemize{
+\item \code{"duckspatial"} (default): Lazy spatial data frame backed by dbplyr/DuckDB
+\item \code{"sf"}: Eagerly collected sf object (uses memory)
+}
+Can be set globally via \code{\link{ddbs_options}(mode = "...")} or
+per-function via this argument. Per-function overrides global setting.}
 
 \item{overwrite}{Boolean. whether to overwrite the existing table if it exists. Defaults
 to \code{FALSE}. This argument is ignored when \code{name} is \code{NULL}.}
@@ -44,31 +56,39 @@ to \code{FALSE}. This argument is ignored when \code{name} is \code{NULL}.}
 Defaults to \code{FALSE}.}
 }
 \value{
-an \code{sf} object with simplified geometries or \code{TRUE} (invisibly) for table creation
+Depends on the \code{mode} argument (or global preference set by \code{\link{ddbs_options}}):
+\itemize{
+\item \code{duckspatial} (default): A \code{duckspatial_df} (lazy spatial data frame) backed by dbplyr/DuckDB.
+\item \code{sf}: An eagerly collected object in R memory, that will return the same data type as the
+\code{sf} equivalent (e.g. \code{sf} or \code{units} vector).
+}
+When \code{name} is provided, the result is also written as a table or view in DuckDB and the function returns \code{TRUE} (invisibly).
 }
 \description{
-Simplifies geometries from a DuckDB table using the Douglas-Peucker algorithm via the spatial extension.
-Returns the result as an \code{sf} object or creates a new table in the database.
+Reduces the complexity of geometries by removing unnecessary vertices while preserving
+the overall shape.
 }
 \examples{
 \dontrun{
-## load packages
+## load package
 library(duckspatial)
-library(sf)
 
 # create a duckdb database in memory (with spatial extension)
 conn <- ddbs_create_conn(dbdir = "memory")
 
 ## read data
-countries_sf <- st_read(system.file("spatial/countries.geojson", package = "duckspatial"))
+countries_ddbs <- ddbs_open_dataset(
+  system.file("spatial/countries.geojson", 
+  package = "duckspatial")
+)
 
 ## store in duckdb
-ddbs_write_vector(conn, countries_sf, "countries")
+ddbs_write_vector(conn, countries_ddbs, "countries")
 
 ## simplify with tolerance of 0.01
-ddbs_simplify("countries", tolerance = 0.01, conn)
+ddbs_simplify("countries", tolerance = 0.01, conn = conn)
 
 ## simplify without using a connection
-ddbs_simplify(countries_sf, tolerance = 0.01)
+ddbs_simplify(countries_ddbs, tolerance = 0.01)
 }
 }

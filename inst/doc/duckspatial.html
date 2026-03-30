@@ -1,54 +1,27 @@
 <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
-<html>
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.24">
 
-<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta charset="utf-8" />
-<meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+<meta name="dcterms.date" content="2026-03-30">
 
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-
-
-<meta name="date" content="2026-01-10" />
-
-<title>Intro to duckspatial</title>
-
-<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
-// be compatible with the behavior of Pandoc < 2.8).
-document.addEventListener('DOMContentLoaded', function(e) {
-  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
-  var i, h, a;
-  for (i = 0; i < hs.length; i++) {
-    h = hs[i];
-    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
-    a = h.attributes;
-    while (a.length > 0) h.removeAttribute(a[0].name);
-  }
-});
-</script>
-
-<style type="text/css">
+<title>Getting started</title>
+<style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
-</style>
-
-
-
-<style type="text/css">
-code {
-white-space: pre;
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1em;  vertical-align: middle;
 }
-.sourceCode {
-overflow: visible;
-}
-</style>
-<style type="text/css" data-origin="pandoc">
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
 html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
@@ -76,72 +49,14 @@ border: none; display: inline-block;
 -khtml-user-select: none; -moz-user-select: none;
 -ms-user-select: none; user-select: none;
 padding: 0 4px; width: 4em;
-color: #aaaaaa;
 }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+pre.numberSource { margin-left: 3em; padding-left: 4px; }
 div.sourceCode
 { }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } 
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.at { color: #7d9029; } 
-code span.bn { color: #40a070; } 
-code span.bu { color: #008000; } 
-code span.cf { color: #007020; font-weight: bold; } 
-code span.ch { color: #4070a0; } 
-code span.cn { color: #880000; } 
-code span.co { color: #60a0b0; font-style: italic; } 
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.do { color: #ba2121; font-style: italic; } 
-code span.dt { color: #902000; } 
-code span.dv { color: #40a070; } 
-code span.er { color: #ff0000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #40a070; } 
-code span.fu { color: #06287e; } 
-code span.im { color: #008000; font-weight: bold; } 
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.kw { color: #007020; font-weight: bold; } 
-code span.op { color: #666666; } 
-code span.ot { color: #007020; } 
-code span.pp { color: #bc7a00; } 
-code span.sc { color: #4070a0; } 
-code span.ss { color: #bb6688; } 
-code span.st { color: #4070a0; } 
-code span.va { color: #19177c; } 
-code span.vs { color: #4070a0; } 
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
-<script>
-// apply pandoc div.sourceCode style to pre.sourceCode instead
-(function() {
-  var sheets = document.styleSheets;
-  for (var i = 0; i < sheets.length; i++) {
-    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
-    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    var j = 0;
-    while (j < rules.length) {
-      var rule = rules[j];
-      // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
-        j++;
-        continue;
-      }
-      var style = rule.style.cssText;
-      // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') {
-        j++;
-        continue;
-      }
-      // replace div.sourceCode by a pre.sourceCode rule
-      sheets[i].deleteRule(j);
-      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
-    }
-  }
-})();
-</script>
 
 
 
@@ -156,34 +71,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#TOC {
-clear: both;
-margin: 0 0 10px 10px;
-padding: 4px;
-width: 400px;
-border: 1px solid #CCCCCC;
-border-radius: 5px;
-background-color: #f6f6f6;
-font-size: 13px;
-line-height: 1.3;
-}
-#TOC .toctitle {
-font-weight: bold;
-font-size: 15px;
-margin-left: 5px;
-}
-#TOC ul {
-padding-left: 40px;
-margin-left: -1.5em;
-margin-top: 5px;
-margin-bottom: 5px;
-}
-#TOC ul ul {
-margin-left: -2em;
-}
-#TOC li {
-line-height: 16px;
 }
 table {
 margin: 1em auto;
@@ -313,271 +200,315 @@ a[href^="http:"] {
 text-decoration: underline; }
 a[href^="https:"] {
 text-decoration: underline; }
-
-code > span.kw { color: #555; font-weight: bold; } 
-code > span.dt { color: #902000; } 
-code > span.dv { color: #40a070; } 
-code > span.bn { color: #d14; } 
-code > span.fl { color: #d14; } 
-code > span.ch { color: #d14; } 
-code > span.st { color: #d14; } 
-code > span.co { color: #888888; font-style: italic; } 
-code > span.ot { color: #007020; } 
-code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; } 
-code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
-
-
-
-
 </head>
 
 <body>
 
 
+<header id="title-block-header">
+<h1 class="title">Getting started</h1>
+
+<p class="date">2026-03-30</p>
+</header>
 
 
-<h1 class="title toc-ignore">Intro to duckspatial</h1>
-<h4 class="date">2026-01-10</h4>
-
-
-
-<p>The <strong>{duckspatial}</strong> package provides fast and
-memory-efficient functions to analyze and manipulate large spatial
-vector datasets in R. It allows R users to benefit directly from the
-analytical power of <a href="https://duckdb.org/docs/stable/core_extensions/spatial/functions">DuckDB
-and its spatial extension</a>, while remaining fully compatible with R’s
-spatial ecosystem, especially <strong>{sf}</strong>.</p>
-<p>At its core, <strong>{duckspatial}</strong> bridges two worlds:</p>
+<h1 id="getting-started">Getting started</h1>
+<p><strong>{duckspatial}</strong> provides fast, memory-efficient functions for analysing and manipulating large spatial vector datasets in R. It bridges <a href="https://duckdb.org/docs/stable/core_extensions/spatial/functions">DuckDB’s spatial extension</a> with R’s spatial ecosystem — in particular <strong>{sf}</strong> — so you can leverage DuckDB’s analytical power without leaving your familiar R workflow.</p>
+<p>Let’s start by loading the packages we need:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckspatial)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code></pre></div>
+</div>
+<h1 id="installation">Installation</h1>
+<p>Install the stable release from CRAN:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(&quot;pak&quot;)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">&quot;duckspatial&quot;</span>)</span></code></pre></div>
+<p>Install the latest GitHub version (more features, fewer accumulated bugs):</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">&quot;Cidree/duckspatial&quot;</span>)</span></code></pre></div>
+<p>Install the development version (may be unstable):</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">&quot;Cidree/duckspatial@dev&quot;</span>)</span></code></pre></div>
+<h1 id="reading-data">Reading data</h1>
+<p>{duckspatial} is built around the <code>duckspatial_df</code> S3 class: a lazy-table-like object that holds a geometry column alongside its geospatial properties, but keeps the data <strong>outside R’s memory</strong> until you explicitly ask for it.</p>
+<p>If you have a local file (a GeoPackage, a Shapefile, a GeoJSON, etc.) you can open it lazily with <code>ddbs_open_dataset()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>countries_ddbs <span class="ot">&lt;-</span> <span class="fu">ddbs_open_dataset</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">system.file</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;spatial/countries.geojson&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">package =</span> <span class="st">&quot;duckspatial&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(countries_ddbs)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A duckspatial lazy spatial table</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● CRS: EPSG:4326 </span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Geometry column: geom </span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Geometry type: POLYGON </span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Bounding box: xmin: -178.91 ymin: -89.9 xmax: 180 ymax: 83.652 </span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Data backed by DuckDB (dbplyr lazy evaluation)</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Use ddbs_collect() or st_as_sf() to materialize to sf</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;temp_view_e1101830_297e_466d_ac35_210cea75b53f&gt; [?? x 8]</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB 1.5.1 [Cidre@Windows 10 x64:R 4.5.2/:memory:]</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    OGC_FID CNTR_ID NAME_ENGL          ISO3_CODE CNTR_NAME FID   date       geom </span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;              &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt; &lt;date&gt;     &lt;wk_&gt;</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1       0 AR      Argentina          ARG       Argentina AR    2021-01-01 &lt;POL…</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2       1 AS      American Samoa     ASM       American… AS    2021-01-01 &lt;POL…</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3       2 AT      Austria            AUT       Österrei… AT    2021-01-01 &lt;POL…</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4       3 AQ      Antarctica         ATA       Antarcti… AQ    2021-01-01 &lt;POL…</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5       4 AD      Andorra            AND       Andorra   AD    2021-01-01 &lt;POL…</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6       5 AE      United Arab Emira… ARE       ????????… AE    2021-01-01 &lt;POL…</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7       6 AF      Afghanistan        AFG       ????????… AF    2021-01-01 &lt;POL…</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8       7 AG      Antigua and Barbu… ATG       Antigua … AG    2021-01-01 &lt;POL…</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9       8 AI      Anguilla           AIA       Anguilla  AI    2021-01-01 &lt;POL…</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10       9 AL      Albania            ALB       Shqipëria AL    2021-01-01 &lt;POL…</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
+</div>
+<blockquote>
+<p><strong>Note:</strong> The first call to <code>ddbs_open_dataset()</code> may take a few seconds. Internally, {duckspatial} creates a default DuckDB connection, then installs and loads the Spatial extension into it. Subsequent calls reuse the same connection and are much faster. We cover this connection in more detail in the <a href="#working-in-a-database">Working in a database</a> section below.</p>
+</blockquote>
+<p>Printing a <code>duckspatial_df</code> object displays the most important metadata at a glance:</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 59%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>CRS</strong></td>
+<td>Coordinate reference system (AUTHORITY:CODE)</td>
+</tr>
+<tr class="even">
+<td><strong>Geometry column</strong></td>
+<td>Name of the column holding geometries</td>
+</tr>
+<tr class="odd">
+<td><strong>Geometry type</strong></td>
+<td>Type(s) present (e.g. <code>POLYGON</code>, <code>MULTIPOLYGON</code>, <code>POINT</code>)</td>
+</tr>
+<tr class="even">
+<td><strong>Bounding box</strong></td>
+<td>Four coordinates bounding all geometries</td>
+</tr>
+<tr class="odd">
+<td><strong>Source</strong></td>
+<td>Name of the temporary view inside DuckDB</td>
+</tr>
+<tr class="even">
+<td><strong>Database</strong></td>
+<td>DuckDB database path and version</td>
+</tr>
+<tr class="odd">
+<td><strong>Data</strong></td>
+<td>First rows of the dataset</td>
+</tr>
+</tbody>
+</table>
+<p>The table is not in R’s memory; it lives inside the DuckDB connection. Every {duckspatial} operation you apply runs there, using the DuckDB engine.</p>
+<p>Alternatively, if you already have an <code>sf</code> object in memory, you can convert it to a <code>duckspatial_df</code> with <code>as_duckspatial_df()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## read with sf as usual</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>countries_sf <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">system.file</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;spatial/countries.geojson&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">package =</span> <span class="st">&quot;duckspatial&quot;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="do">## push into DuckDB</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>countries_ddbs <span class="ot">&lt;-</span> <span class="fu">as_duckspatial_df</span>(countries_sf)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(countries_ddbs)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;duckspatial_df&quot;        &quot;tbl_duckdb_connection&quot; &quot;tbl_dbi&quot;              </span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4] &quot;tbl_sql&quot;               &quot;tbl_lazy&quot;              &quot;tbl&quot;</span></span></code></pre></div>
+</div>
+<h1 id="processing-data">Processing data</h1>
+<p>Let’s run a typical spatial workflow: dissolving all country polygons into a single <code>MULTIPOLYGON</code> with internal boundaries removed, using <code>ddbs_union()</code> (the {duckspatial} equivalent of <code>sf::st_union()</code>).</p>
+<p><code>ddbs_union()</code> requires all geometries to be valid. We can check this first with <code>ddbs_is_valid()</code> (equivalent to <code>sf::st_is_valid()</code>), which appends a logical <code>is_valid</code> column to the lazy table so the subsequent <code>filter()</code> also runs inside DuckDB:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>countries_ddbs <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ddbs_is_valid</span>() <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>is_valid)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A duckspatial lazy spatial table</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● CRS: EPSG:4326 </span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Geometry column: geometry </span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Geometry type: POLYGON </span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Bounding box: xmin: -178.91 ymin: -89.9 xmax: 180 ymax: -63.281 </span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Data backed by DuckDB (dbplyr lazy evaluation)</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Use ddbs_collect() or st_as_sf() to materialize to sf</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;temp_view_4442daca_f6d4_4430_9b06_32c7af540e87&gt; [?? x 8]</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB 1.5.1 [Cidre@Windows 10 x64:R 4.5.2/:memory:]</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CNTR_ID NAME_ENGL  ISO3_CODE CNTR_NAME  FID   date       is_valid geometry    </span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt; &lt;date&gt;     &lt;lgl&gt;    &lt;wk_wkb&gt;    </span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 AQ      Antarctica ATA       Antarctica AQ    2021-01-01 FALSE    &lt;POLYGON ((…</span></span></code></pre></div>
+</div>
+<p>Antarctica has invalid geometries (likely self-intersections). We can repair them with <code>ddbs_make_valid()</code> before computing the union, and because <code>duckspatial_df</code> objects are lazy, we can chain both steps in a single pipe:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>world_ddbs <span class="ot">&lt;-</span> countries_ddbs <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ddbs_make_valid</span>() <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ddbs_union</span>()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(world_ddbs)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A duckspatial lazy spatial table</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● CRS: EPSG:4326 </span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Geometry column: geometry </span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Geometry type: MULTIPOLYGON </span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Bounding box: xmin: -178.91 ymin: -89.9 xmax: 180 ymax: 83.652 </span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Data backed by DuckDB (dbplyr lazy evaluation)</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Use ddbs_collect() or st_as_sf() to materialize to sf</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;temp_view_3c6612b3_2852_489e_bc7a_dc2e24fc6d07&gt; [?? x 1]</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB 1.5.1 [Cidre@Windows 10 x64:R 4.5.2/:memory:]</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   geometry                                                                      </span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;wk_wkb&gt;                                                                      </span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 &lt;MULTIPOLYGON (((-148.8727 -85.21352, -150.1968 -85.49222, -151.2143 -85.4843…</span></span></code></pre></div>
+</div>
+<p>The result is still a lazy <code>duckspatial_df</code>. To visualise it we need to pull the data into R as an <code>sf</code> object. Any of the following three calls do that:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Option A</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>world_sf <span class="ot">&lt;-</span> <span class="fu">ddbs_collect</span>(world_ddbs)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Option B</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>world_sf <span class="ot">&lt;-</span> <span class="fu">collect</span>(world_ddbs)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Option C</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>world_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(world_ddbs)</span></code></pre></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>world_sf <span class="ot">&lt;-</span> world_ddbs <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ddbs_collect</span>()</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(world_sf)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 1 feature and 0 fields</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Dimension:     XY</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Bounding box:  xmin: -178.9125 ymin: -89.9 xmax: 180 ymax: 83.65187</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 1</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                                         geometry</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; *                                                             &lt;MULTIPOLYGON [°]&gt;</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 (((-148.8727 -85.21352, -150.1968 -85.49222, -151.2143 -85.48437, -151.7571 -…</span></span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(world_sf)</span></code></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img role="img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABUAAAAPACAMAAADDuCPrAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAB2HAAAdhwGP5fFlAAAgAElEQVR4nO3d25qrKBCGYXP/Nz3PrE4UEBBKNlXwvQezutOJFgh/UNM9xwcAIHLMLgAArCJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUA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gAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAj9B4akU9n4a/jgAAAAAElFTkSuQmCC" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<h1 id="working-in-a-database">Working in a database</h1>
+<p>So far we have been using the default, temporary DuckDB connection that {duckspatial} manages for us. For some use cases you may want to manage the connection yourself, most commonly when you need a <strong>persistent database</strong> that survives the R session.</p>
+<p>There are two connection modes:</p>
 <ul>
-<li>R spatial workflows based on {sf} objects</li>
-<li>Database-backed spatial analytics powered by DuckDB SQL</li>
+<li><strong>Non-persistent (in-memory):</strong> data exists only for the duration of the R session or until it is closed. As of v1.0.0, this mode is kept for backward compatibility, but working with <code>duckspatial_df</code> objects directly achieves the same goals with less boilerplate.</li>
+<li><strong>Persistent:</strong> data is written to a <code>.duckdb</code> or <code>.db</code> file on disk and survives after the session ends.</li>
 </ul>
-<p>This design makes <strong>{duckspatial}</strong> especially well
-suited for:</p>
-<ul>
-<li>Working with large spatial data sets</li>
-<li>Speeding up spatial analysis at scale</li>
-<li>Workflows with larger-than memory data</li>
-</ul>
-<div id="installation" class="section level1">
-<h1>Installation</h1>
-<p>You can install <strong>{duckspatial}</strong> directly from CRAN
-with:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;duckspatial&quot;</span>)</span></code></pre></div>
-<p>Or you can install the development version from <a href="https://github.com/">GitHub</a> with:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># install.packages(&quot;pak&quot;)</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">&quot;Cidree/duckspatial&quot;</span>)</span></code></pre></div>
+<h2 id="creating-a-connection">Creating a connection</h2>
+<p>{duckspatial} provides a convenience wrapper, <code>ddbs_create_conn()</code>, that creates a DuckDB connection, installs the Spatial extension, and loads it, all in one call:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>conn <span class="ot">&lt;-</span> <span class="fu">ddbs_create_conn</span>()</span></code></pre></div>
 </div>
-<div id="core-idea-flexible-spatial-workflows" class="section level1">
-<h1>Core idea: flexible spatial workflows</h1>
-<p>A central design principle of <strong>{duckspatial}</strong> is that
-the same spatial operation can be used in different ways, depending on
-how your data is stored and how you want to manage memory and
-performance. Most functions in <strong>{duckspatial}</strong> support
-four complementary workflows:</p>
-<ol style="list-style-type: decimal">
-<li>Input<code>sf</code> → Output <code>sf</code></li>
-<li>Input <code>sf</code> → Output DuckDB table</li>
-<li>Input DuckDB table → Output <code>sf</code></li>
-<li>Input DuckDB table → Output DuckDB table</li>
-</ol>
-<p>Let’s see a few examples to illustrate these workflows with a few
-sample data sets.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(duckspatial)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co"># polygons</span></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>countries_sf  <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_read</span>(</span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>    <span class="fu">system.file</span>(<span class="st">&quot;spatial/countries.geojson&quot;</span>,  <span class="at">package =</span> <span class="st">&quot;duckspatial&quot;</span>),</span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    <span class="at">quiet =</span> <span class="cn">TRUE</span></span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>    )</span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co"># create random points</span></span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>points_sf <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  <span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>  <span class="at">x  =</span> <span class="fu">runif</span>(n, <span class="at">min =</span> <span class="sc">-</span><span class="dv">180</span>, <span class="at">max =</span> <span class="dv">180</span>),</span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>  <span class="at">y  =</span> <span class="fu">runif</span>(n, <span class="at">min =</span>  <span class="sc">-</span><span class="dv">90</span>, <span class="at">max =</span>  <span class="dv">90</span>)</span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>  sf<span class="sc">::</span><span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">&quot;x&quot;</span>,<span class="st">&quot;y&quot;</span>), <span class="at">crs =</span> <span class="dv">4326</span>)</span></code></pre></div>
-<div id="workflow-1-sf-input-sf-output" class="section level2">
-<h2>Workflow 1: <code>sf</code> input → <code>sf</code> output</h2>
-<p>The simplest way to perform fast spatial operations. Here you pass
-<code>sf</code> objects as inputs, and under the hood {duckspatial}:</p>
-<ul>
-<li>Registers them temporarily in DuckDB</li>
-<li>Executes the spatial operation using SQL</li>
-<li>Returns the result as an {sf} object</li>
-</ul>
-<p>In this example, we use <code>ddbs_join()</code> (which is equivalent
-to <code>sf::st_join</code>) to determine which country is intersected
-by each point.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>result_sf <span class="ot">&lt;-</span> <span class="fu">ddbs_join</span>(</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="at">x =</span> points_sf,</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">y =</span> countries_sf,</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="at">join =</span> <span class="st">&quot;intersects&quot;</span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>)</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="fu">head</span>(result_sf)</span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 6 features and 7 fields</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; Geometry type: POINT</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; Dimension:     XY</span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; Bounding box:  xmin: -72.75607 ymin: -50.15994 xmax: -67.79479 ymax: -43.01591</span></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt;     id CNTR_ID NAME_ENGL ISO3_CODE CNTR_NAME FID       date</span></span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; 1  708      AR Argentina       ARG Argentina  AR 2021-01-01</span></span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; 2 3041      AR Argentina       ARG Argentina  AR 2021-01-01</span></span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; 3 9309      AR Argentina       ARG Argentina  AR 2021-01-01</span></span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; 4 2446      AR Argentina       ARG Argentina  AR 2021-01-01</span></span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; 5 8456      AR Argentina       ARG Argentina  AR 2021-01-01</span></span>
-<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt; 6 2707      AR Argentina       ARG Argentina  AR 2021-01-01</span></span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co">#&gt;                      geometry</span></span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co">#&gt; 1 POINT (-72.75607 -50.15994)</span></span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co">#&gt; 2 POINT (-68.77194 -48.12303)</span></span>
-<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co">#&gt; 3 POINT (-70.82253 -46.23146)</span></span>
-<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co">#&gt; 4  POINT (-71.6444 -44.25323)</span></span>
-<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co">#&gt; 5 POINT (-71.18679 -44.60882)</span></span>
-<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co">#&gt; 6 POINT (-67.79479 -43.01591)</span></span></code></pre></div>
-<ul>
-<li><strong>When to use:</strong> quick analysis, prototyping, or when
-you don’t need to persist intermediate tables.</li>
-</ul>
+<p>You can also limit the resources DuckDB is allowed to use:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>conn <span class="ot">&lt;-</span> <span class="fu">ddbs_create_conn</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">threads         =</span> <span class="dv">2</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">memory_limit_gb =</span> <span class="dv">8</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 </div>
-<div id="creating-a-duckdb-connection" class="section level2">
-<h2>Creating a DuckDB connection</h2>
-<p>The next workflows use a DuckDB connection, which makes these
-workflows much more efficient for working with large spatial data sets
-in general. To create a DuckDB connection, we use the
-<code>ddbs_create_conn()</code> function, which automatically creates
-the database connection and installs / loads DuckDB’s spatial extension
-in a single call.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># create duckdb con and install / load spatial extension</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>conn <span class="ot">&lt;-</span> duckspatial<span class="sc">::</span><span class="fu">ddbs_create_conn</span>()</span></code></pre></div>
+<p>Under the hood, <code>ddbs_create_conn()</code> is equivalent to:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>conn <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>())</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_install</span>(conn)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_load</span>(conn)</span></code></pre></div>
+<h2 id="non-persistent-database">Non-persistent database</h2>
+<p>Once you have a connection, write spatial data into it with <code>ddbs_write_table()</code>. It accepts both <code>sf</code> and <code>duckspatial_df</code> objects:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_write_table</span>(conn, countries_sf, <span class="at">name =</span> <span class="st">&quot;countries&quot;</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ Table countries successfully imported</span></span></code></pre></div>
 </div>
-<div id="workflow-2-sf-input-duckdb-table" class="section level2">
-<h2>Workflow 2: <code>sf</code> input → DuckDB table</h2>
-<p>This workflow is ideal when you start in R, but want to persist
-results efficiently in the database without load the results to memory.
-You pass <code>sf</code> objects as input, and {duckspatial} writes the
-output directly to DuckDB.</p>
-<p>The only difference is that here you also pass the <code>name</code>
-of the table that should be written with the output to DuckDB and the
-database <code>conn</code> where the table should saved.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">ddbs_join</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>    <span class="at">conn =</span> conn,</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">x =</span> points_sf,</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="at">y =</span> countries_sf,</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    <span class="at">join =</span> <span class="st">&quot;intersects&quot;</span>, </span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">&quot;points_in_countries_tbl&quot;</span></span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>)</span></code></pre></div>
-<p>And if you want to fetch the table to memory, the
-<code>ddbs_read_vector()</code> allows you to read a table and return it
-as a <code>sf</code> object.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>tbl <span class="ot">&lt;-</span> <span class="fu">ddbs_read_vector</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>    <span class="at">conn =</span> conn,</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">&quot;points_in_countries_tbl&quot;</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    )</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="fu">head</span>(tbl)</span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; Simple feature collection with 6 features and 7 fields</span></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; Geometry type: POINT</span></span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; Dimension:     XY</span></span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; Bounding box:  xmin: -72.75607 ymin: -50.15994 xmax: -67.79479 ymax: -43.01591</span></span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt;     id CNTR_ID NAME_ENGL ISO3_CODE CNTR_NAME FID       date</span></span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; 1  708      AR Argentina       ARG Argentina  AR 2021-01-01</span></span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; 2 3041      AR Argentina       ARG Argentina  AR 2021-01-01</span></span>
-<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; 3 9309      AR Argentina       ARG Argentina  AR 2021-01-01</span></span>
-<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; 4 2446      AR Argentina       ARG Argentina  AR 2021-01-01</span></span>
-<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt; 5 8456      AR Argentina       ARG Argentina  AR 2021-01-01</span></span>
-<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt; 6 2707      AR Argentina       ARG Argentina  AR 2021-01-01</span></span>
-<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt;                      geometry</span></span>
-<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co">#&gt; 1 POINT (-72.75607 -50.15994)</span></span>
-<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co">#&gt; 2 POINT (-68.77194 -48.12303)</span></span>
-<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co">#&gt; 3 POINT (-70.82253 -46.23146)</span></span>
-<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="co">#&gt; 4  POINT (-71.6444 -44.25323)</span></span>
-<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="co">#&gt; 5 POINT (-71.18679 -44.60882)</span></span>
-<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="co">#&gt; 6 POINT (-67.79479 -43.01591)</span></span></code></pre></div>
+<p>Verify the table is there:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_list_tables</span>(conn)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   table_schema table_name table_type</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         main  countries BASE TABLE</span></span></code></pre></div>
 </div>
-<div id="workflow-3-duckdb-tables-sf-output" class="section level2">
-<h2>Workflow 3: DuckDB tables → <code>sf</code> output</h2>
-<p>In this workflow, your spatial data lives inside DuckDB as tables but
-you want to return the output of <code>sf</code> objects to memory.</p>
-<p>You can easily write <code>sf</code> objects as tables to duckdb with
-the <code>ddbs_write_vector()</code> function by passing the
-<code>sf</code> data and indicating the <code>name</code> of the table
-to be written in the database.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># write `sf` objects as tables to duckdb</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>duckspatial<span class="sc">::</span><span class="fu">ddbs_write_vector</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    <span class="at">conn =</span> conn, </span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>    <span class="at">data =</span> countries_sf, </span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">&quot;countries&quot;</span></span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    )</span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>duckspatial<span class="sc">::</span><span class="fu">ddbs_write_vector</span>(</span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>    <span class="at">conn =</span> conn, </span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>    <span class="at">data =</span> points_sf, </span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">&quot;points&quot;</span></span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>    )</span></code></pre></div>
-<p>To perform a spatial operation, you pass the table names and you get
-an <code>sf</code> object back.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>result_sf <span class="ot">&lt;-</span> <span class="fu">ddbs_join</span>(</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="at">conn =</span> conn,</span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="at">x =</span> <span class="st">&quot;points&quot;</span>,</span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="at">y =</span> <span class="st">&quot;countries&quot;</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="at">join =</span> <span class="st">&quot;intersects&quot;</span></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  )</span></code></pre></div>
-<ul>
-<li><strong>When to use:</strong> iterative workflows,
-larger-than-memory data, or when you’ll run multiple queries on the same
-tables.</li>
-</ul>
+<p>From here the workflow mirrors the <code>duckspatial_df</code> workflow. Functions that accept a <code>duckspatial_df</code> also accept a table name + connection pair:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_is_valid</span>(<span class="st">&quot;countries&quot;</span>, <span class="at">conn =</span> conn) <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>is_valid)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A duckspatial lazy spatial table</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● CRS: EPSG:4326 </span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Geometry column: geometry </span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Geometry type: POLYGON </span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ● Bounding box: xmin: -178.91 ymin: -89.9 xmax: 180 ymax: -63.281 </span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Data backed by DuckDB (dbplyr lazy evaluation)</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Use ddbs_collect() or st_as_sf() to materialize to sf</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;temp_view_fd4e90e0_ba9c_464e_8b9a_734229c2b9fa&gt; [?? x 8]</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Database: DuckDB 1.5.1 [Cidre@Windows 10 x64:R 4.5.2/:memory:]</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CNTR_ID NAME_ENGL  ISO3_CODE CNTR_NAME  FID   date       is_valid geometry    </span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt; &lt;date&gt;     &lt;lgl&gt;    &lt;wk_wkb&gt;    </span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 AQ      Antarctica ATA       Antarctica AQ    2021-01-01 FALSE    &lt;POLYGON ((…</span></span></code></pre></div>
 </div>
-<div id="workflow-4-duckdb-tables-duckdb-table" class="section level2">
-<h2>Workflow 4: DuckDB tables → DuckDB table</h2>
-<p>This is the fastest and most scalable workflow. The entire
-computation happens inside DuckDB, and the result is written to a new
-database table.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">ddbs_join</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="at">conn =</span> conn,</span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="at">x =</span> <span class="st">&quot;points&quot;</span>,</span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="at">y =</span> <span class="st">&quot;countries&quot;</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="at">join =</span> <span class="st">&quot;intersects&quot;</span>, </span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;points_in_countries_tbl&quot;</span>, </span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
-<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>  )</span>
-<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co"># and read the table to memory as sf</span></span>
-<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co"># tbl &lt;- ddbs_read_vector(</span></span>
-<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#     conn = conn,</span></span>
-<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#     name = &quot;points_in_countries_tbl&quot;</span></span>
-<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#     )</span></span></code></pre></div>
-<ul>
-<li><strong>When to use:</strong> Very large datasets, Production
-pipelines with multiple steps and when results will be reused downstream
-in DuckDB</li>
-</ul>
+<p>You can write intermediate results as named tables in the database by passing a <code>name</code> argument:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_make_valid</span>(<span class="st">&quot;countries&quot;</span>, <span class="at">conn =</span> conn, <span class="at">name =</span> <span class="st">&quot;countries_valid&quot;</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ Query successful</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_union</span>(<span class="st">&quot;countries_valid&quot;</span>, <span class="at">conn =</span> conn, <span class="at">name =</span> <span class="st">&quot;world&quot;</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ Query successful</span></span></code></pre></div>
 </div>
+<p><code>ddbs_read_table()</code> materialises a table directly as <code>sf</code> (not lazily), so the result can be passed straight to <code>plot()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_read_table</span>(conn, <span class="st">&quot;world&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>()</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✔ table world successfully imported.</span></span></code></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img role="img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABUAAAAPACAMAAADDuCPrAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAB2HAAAdhwGP5fFlAAAgAElEQVR4nO3d25qrKBCGYXP/Nz3PrE4UEBBKNlXwvQezutOJFgh/UNM9xwcAIHLMLgAArCJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUA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gAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAj9B4akU9n4a/jgAAAAAElFTkSuQmCC" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>When you are done, close the connection. Because this is an in-memory database, all tables written to it will be discarded:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_stop_conn</span>(conn)</span></code></pre></div>
+</div>
+<h2 id="persistent-database">Persistent database</h2>
+<p>The workflow is identical to the non-persistent case. The only difference is the connection string, pass a file path to <code>ddbs_create_conn()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>conn <span class="ot">&lt;-</span> <span class="fu">ddbs_create_conn</span>(<span class="st">&quot;my_database.duckdb&quot;</span>)</span></code></pre></div>
+</div>
+<p>A practical pattern is to do all processing with the <code>duckspatial_df</code> workflow (which is lazily evaluated inside the default connection), and only write the final results to the persistent database:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="do">## open persistent connection</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>conn <span class="ot">&lt;-</span> <span class="fu">ddbs_create_conn</span>(<span class="st">&quot;my_database.duckdb&quot;</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="do">## do all processing with duckspatial_df objects</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>world_ddbs <span class="ot">&lt;-</span> <span class="fu">ddbs_open_dataset</span>(</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">system.file</span>(<span class="st">&quot;spatial/countries.geojson&quot;</span>, <span class="at">package =</span> <span class="st">&quot;duckspatial&quot;</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ddbs_make_valid</span>() <span class="sc">|&gt;</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ddbs_union</span>()</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="do">## write only the final result to the persistent database</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_write_table</span>(conn, world_ddbs, <span class="at">name =</span> <span class="st">&quot;world&quot;</span>)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="do">## close — &quot;my_database.duckdb&quot; will persist on disk</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ddbs_stop_conn</span>(conn)</span></code></pre></div>
 </div>
 
 
 
-<!-- code folding -->
 
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
-
-</body>
-</html>
+</body></html>

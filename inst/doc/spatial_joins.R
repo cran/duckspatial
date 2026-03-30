@@ -1,17 +1,14 @@
-## ----include = FALSE----------------------------------------------------------
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  eval = identical(tolower(Sys.getenv("NOT_CRAN")), "true"),
-  out.width = "100%"
-)
+## -----------------------------------------------------------------------------
+#| include: false
 
 # CRAN OMP THREAD LIMIT to avoid CRAN NOTE
 Sys.setenv(OMP_THREAD_LIMIT = 2)
 
+
 ## -----------------------------------------------------------------------------
+#| message: false
+#| warning: false
 library(duckspatial)
-# library(mapview)
 library(sf)
 
 # polygons
@@ -31,6 +28,7 @@ points_sf <- data.frame(
   sf::st_as_sf(coords = c("x","y"), crs = 4326)
 
 
+
 ## ----message=FALSE------------------------------------------------------------
 out_sf1 <- ddbs_join(
   x    = points_sf,
@@ -42,15 +40,17 @@ out_sf1 <- ddbs_join(
 # mapview(out_sf1, zcol="NAME_ENGL")
 
 
+
 ## -----------------------------------------------------------------------------
 # create a fresh DuckDB connection
 conn <- duckspatial::ddbs_create_conn()
 
 
+
 ## ----message=FALSE------------------------------------------------------------
 # write data to DuckDB
-ddbs_write_vector(conn, points_sf,   "points",    overwrite = TRUE)
-ddbs_write_vector(conn, countries_sf, "countries", overwrite = TRUE)
+ddbs_write_table(conn, points_sf,   "points",    overwrite = TRUE)
+ddbs_write_table(conn, countries_sf, "countries", overwrite = TRUE)
 
 # spatial join inside DuckDB; result returned as sf
 out_sf2 <- ddbs_join(
@@ -59,6 +59,7 @@ out_sf2 <- ddbs_join(
   y    = "countries",
   join = "within"
 )
+
 
 ## ----message=FALSE------------------------------------------------------------
 ddbs_join(
@@ -74,6 +75,7 @@ ddbs_join(
 # DBI::dbReadTable(conn, "points_in_countries") |>
 #     sf::st_as_sf(wkt = 'geometry') |> 
 #     head()
+
 
 
 ## -----------------------------------------------------------------------------
