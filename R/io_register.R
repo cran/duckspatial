@@ -55,23 +55,30 @@ ddbs_register_table <- function(
     db_tables <- paste0(tables_df$table_schema, ".", tables_df$table_name) |>
         sub(pattern = "^main\\.", replacement = "")
     name_exists <- view_name %in% db_tables
+    
+    # Prefix only the table component if it's schema-qualified to avoid 
+    # broken names like __raw_schema.table. Also, duckdb_register_arrow 
+    # doesn't support schema-qualified names, so we use a single component.
+    raw_view_name <- paste0("__raw_", gsub("\\.", "_", view_name))
+
     arrow_views <- try(
         duckdb::duckdb_list_arrow(conn),
         silent = TRUE
     )
-    arrow_exists <- if (inherits(arrow_views, "try-error")) {
-        FALSE
-    } else {
-        view_name %in% arrow_views
+    if (inherits(arrow_views, "try-error")) {
+        arrow_views <- character(0)
     }
+    
+    arrow_exists <- view_name %in% arrow_views
+    raw_exists <- raw_view_name %in% arrow_views
 
-    if ((name_exists || arrow_exists) && !overwrite) {
+    if ((name_exists || arrow_exists || raw_exists) && !overwrite) {
         cli::cli_abort(
             "The provided view (or table) name is already present in the database. Please, use `overwrite = TRUE` or choose a different name."
         )
     }
 
-    if (overwrite && (name_exists || arrow_exists)) {
+    if (overwrite && (name_exists || arrow_exists || raw_exists)) {
         if (name_exists) {
             match_idx <- which(db_tables == view_name)[1]
             table_type <- tables_df$table_type[match_idx]
@@ -87,6 +94,12 @@ ddbs_register_table <- function(
                 cli::cli_alert_info("Existing object {view_name} dropped")
             }
         }
+        
+        # Also clean up any potential hidden raw arrow view
+        if (raw_exists) {
+            try(duckdb::duckdb_unregister_arrow(conn, raw_view_name), silent = TRUE)
+        }
+        
         if (arrow_exists) {
             try(
                 duckdb::duckdb_unregister_arrow(conn, view_name),
@@ -109,20 +122,103 @@ ddbs_register_table <- function(
 
     ## Get original geometry column name and CRS
     geom_name <- attr(data_sf, "sf_column")
-    crs <- sf::st_crs(data_sf, describe = TRUE)$input
-  
-    ## Create arrow table
-    arrow_table <- {
-      df[[geom_name]] <- geoarrow::as_geoarrow_vctr(
-        wkb,
-        schema = geoarrow::geoarrow_wkb(crs = crs)
-      )
-      arrow::Table$create(df)
+    crs_obj <- sf::st_crs(data_sf)
+    
+    # DuckDB accepts WKT in GEOMETRY('<crs>'), but GeoArrow metadata consumed by
+    # DuckDB cannot serialize WKT here. Keep the two CRS representations separate.
+    if (!is.na(crs_obj)) {
+        if (!is.na(crs_obj$epsg)) {
+            crs_input <- paste0("EPSG:", crs_obj$epsg)
+        } else {
+            crs_input <- crs_obj$wkt
+        }
+        geoarrow_crs <- if (!is.na(crs_obj$epsg)) crs_input else crs_obj$proj4string
+        if (length(geoarrow_crs) == 0 || is.na(geoarrow_crs) || identical(geoarrow_crs, "")) {
+            geoarrow_crs <- NULL
+        }
+    } else {
+        crs_input <- NULL
+        geoarrow_crs <- NULL
     }
 
-    ## Register the table
-    duckdb::duckdb_register_arrow(conn, view_name, arrow_table)
+    ## Estimate chunk size from a sample. This is needed to avoid OOM errors
+    ## when creating the Arrow table for very large datasets. The chunk size is
+    ## determined based on the size of the first 1000 rows
+    n <- length(wkb)
+    sample_n <- min(1000L, n)
+    sample_bytes <- sum(vapply(unclass(wkb[seq_len(sample_n)]), length, integer(1)))
+    avg_bytes_per_feature <- sample_bytes / sample_n
 
+    ## Target ~500MB per chunk (safely under ~2GB limit)
+    target_bytes <- 500L * 1024L^2
+    chunk_size   <- max(1000L, floor(target_bytes / avg_bytes_per_feature))
+    idx          <- split(seq_len(n), ceiling(seq_len(n) / chunk_size))
+
+    ## Create:
+    ## - Arrow table: when the dataset is small (<500MB)
+    ## - Arrow Batch: when the dataset is large (>500MB)
+    if (length(idx) == 1L) {
+        ## Create a single Arrow table
+        arrow_table <- {
+            df[[geom_name]] <- geoarrow::as_geoarrow_vctr(
+                wkb,
+                schema = geoarrow::geoarrow_wkb(crs = geoarrow_crs)
+            )
+            arrow::Table$create(df)
+        }
+    } else {
+        ## Create an Arrow RecordBatchReader for chunked processing
+        batches <- lapply(idx, function(i) {
+            chunk <- df[i, , drop = FALSE]
+            chunk[[geom_name]] <- geoarrow::as_geoarrow_vctr(
+                wkb[i],
+                schema = geoarrow::geoarrow_wkb(crs = geoarrow_crs)
+            )
+            arrow::record_batch(chunk)
+        })
+        
+        ## Create the table as a batch
+        schema <- batches[[1]]$schema
+        arrow_table <- arrow::RecordBatchReader$create(
+            batches = batches, 
+            schema = schema
+        )
+    }
+
+    ## Register the raw Arrow table under a hidden name
+    tryCatch({
+        duckdb::duckdb_register_arrow(conn, raw_view_name, arrow_table)
+        
+        ## Wrap it in a user-facing typed view
+        q_geom <- DBI::dbQuoteIdentifier(conn, geom_name)
+        
+        # If view_name is qualified, DuckDB doesn't allow TEMP VIEW in other schemas.
+        # We use a regular VIEW if qualified, or a TEMP VIEW if not.
+        view_type <- if (name_list$schema_name != "main") "VIEW" else "TEMP VIEW"
+
+        if (!is.null(crs_input)) {
+            # Escape single quotes in WKT for SQL safety
+            safe_crs <- gsub("'", "''", crs_input)
+            DBI::dbExecute(conn, glue::glue(
+                "CREATE OR REPLACE {view_type} {view_name} AS ",
+                "SELECT * EXCLUDE {q_geom}, ",
+                "({q_geom}::GEOMETRY('{safe_crs}')) AS {q_geom} ",
+                "FROM {raw_view_name}"
+            ))
+        } else {
+            # No CRS, just create a direct view casting to generic GEOMETRY
+            DBI::dbExecute(conn, glue::glue(
+                "CREATE OR REPLACE {view_type} {view_name} AS ",
+                "SELECT * EXCLUDE {q_geom}, ",
+                "({q_geom}::GEOMETRY) AS {q_geom} ",
+                "FROM {raw_view_name}"
+            ))
+        }
+    }, error = function(e) {
+        # Cleanup on failure to avoid stale registrations
+        try(duckdb::duckdb_unregister_arrow(conn, raw_view_name), silent = TRUE)
+        stop(e)
+    })
 
     ## User feedback
     if (isFALSE(quiet)) {

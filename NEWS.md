@@ -1,4 +1,61 @@
+# duckspatial 1.1.0
+
+## NEW FEATURES
+
+* Implementation of `duckspatial` macros: this allows to use some `duckspatial` functions within `dplyr` verbs (e.g. `data |> mutate(area = ddbs_area(geometry))`) (#92).
+
+* `ddbs_dump()`: decompose multi-geometry types into individual single geometry components (#44, 117).
+
+* `ddbs_maximum_inscribed_circle()`: returns the maximum inscribed circle of the input geometry (#117).
+
+* `ddbs_minimum_rotated_rectangle()`: returns the minimum rotated rectangle that bounds the input geometry (#117).
+
+* `ddbs_set_crs()`: assigns the CRS to a spatial object. No transformation is applied to the geometries (#118).
+
+* `ddbs_crop()`: similar to `ddbs_intersection()`, but it crops to the bounding box (#118).
+
+* `ddbs_line_interpolate()`: interpolates a point or points along a line geometry (#118).
+
+* `ddbs_line_substring()`: gets a fraction of a linestring (#118).
+
+* `ddbs_line_merge()`:merges connected multistrings (#118).
+
+* `ddbs_z()` and `ddbs_m()`: to extract Z and M coordinates as a new column (#118).
+
+* `ddbs_make_envelope()`: creates a rectangular polygon from 4 coordinates (#118).
+
+* `ddbs_locate_between()`: locates points that fall with the specified M range (#118).
+
+* `ddbs_locate_along()`: locates points that match the specified M value (#118).
+
+* `ddbs_remove_repeated_points()`: removes repeated points, optionally with some tolerance (#118).
+
+* `ddbs_read_meta()`: reads the metadata of a vectorial data file (#118).
+
+* `ddbs_make_line()`: creates LINESTRINGS from POINT geometries (#126).
+
+## ENHANCEMENTS
+
+* `group_by` and `summarise` methods now drop the spatial attributes when the output is not a `duckspatial_df` anymore (#119).
+
+* `ddbs_create_conn()`: gains the `upgrade` argument that is passed to `ddbs_install()`.
+
+* `ddbs_install()`: now returns a better error message if the extension is already loaded, and there's an attempt to upgrade it.
+
+* `ddbs_centroid()`: gains the argument `method` to implement ST_PointOnSurface (#118).
+
+* `ddbs_as_points()` allows to create a `duckspatial_df` from raw coordinate or WKT columns. It also gains two new arguments: `remove` and `na.fail` (#125).
+
+* `ddbs_open_dataset()`: can open geoparquet files when the geometry is encoded as WKB geoparquet. It also fails with a better error message when the geometry is encoded as a native arrow/geoarrow encoding (#129).
+
+## BUG FIXES
+
+* Large datasets couldn't be processed because an `arrow` code limitation in `ddbs_register_table()` (#124).
+
+
 # duckspatial 1.0.0
+
+Learn more about this version [here](https://adrian-cidre.com/posts/015_duckspatial_v100/).
 
 ## MAJOR CHANGES
 

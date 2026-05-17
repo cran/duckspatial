@@ -661,15 +661,20 @@ full_join.duckspatial_df <- function(x, y, by = NULL, ...) {
 # Grouping and aggregating methods
 # =============================================================================
 
+.strip_spatial_attrs <- function(x) {
+  attr(x, "sf_column")    <- NULL
+  attr(x, "crs")          <- NULL
+  attr(x, "source_table") <- NULL
+  attr(x, "source_conn")  <- NULL
+  x
+}
+
 
 #' @rdname duckspatial_df_dplyr
 #' @export
 #' @importFrom dplyr group_by
 group_by.duckspatial_df <- function(.data, ..., .add = FALSE, .drop = dplyr::group_by_drop_default(.data)) {
-  atts <- attributes(.data)
-  class(.data) <- setdiff(class(.data), "duckspatial_df")
-  res <- NextMethod()
-  return(res)
+  NextMethod()
 }
 
 #' @rdname duckspatial_df_dplyr
@@ -713,9 +718,9 @@ summarise.duckspatial_df <- function(.data, ...) {
   } else {
     cli::cli_warn(c(
       "Geometry column {.field {geom_col}} was dropped by {.fn summarise}.",
-      "i" = "Use a spatial aggregate like {.fn ST_Union_Agg} to preserve geometry.",
+      "i" = "Use a spatial aggregate like {.fn {geom_col} = ddbs_union({geom_col})} to preserve geometry.",
       "i" = "Result is no longer a {.cls duckspatial_df}."
     ))
-    res
+    .strip_spatial_attrs(res)
   }
 }
