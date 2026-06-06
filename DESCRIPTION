@@ -1,7 +1,7 @@
 Type: Package
 Package: duckspatial
 Title: R Interface to 'DuckDB' Database with Spatial Extension
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(
     person(
         "Adrián", "Cidre González", 
@@ -42,7 +42,7 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 RoxygenNote: 7.3.3
 NeedsCompilation: no
-Packaged: 2026-05-17 07:49:20 UTC; Cidre
+Packaged: 2026-06-06 11:19:48 UTC; Cidre
 Author: Adrián Cidre González [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-3310-3052>),
   Egor Kotov [aut] (ORCID: <https://orcid.org/0000-0001-6690-5345>),
@@ -50,4 +50,4 @@ Author: Adrián Cidre González [aut, cre] (ORCID:
     <https://orcid.org/0000-0003-2125-7465>)
 Maintainer: Adrián Cidre González <adrian.cidre@gmail.com>
 Repository: CRAN
-Date/Publication: 2026-05-17 12:50:02 UTC
+Date/Publication: 2026-06-06 11:50:02 UTC
